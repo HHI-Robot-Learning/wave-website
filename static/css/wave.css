@@ -239,3 +239,28 @@ html[data-theme="dark"] .dark-plot .dark-plot-keep {
   left: 0;
   clip-path: inset(8.7% 0.3% 70.5% 8.35%);
 }
+
+/* Real-robot videos: full column width, one under the other. */
+.real-video {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  background: #000;
+}
+
+/* Abstract videos: one row, each cell as wide as its aspect ratio (--ar) so all clips share a height. */
+.video-row {
+  display: flex;
+  gap: 1rem;
+  margin: 1.25rem 0 1.5rem;
+}
+.video-row .video-cell { flex: var(--ar) 1 0; min-width: 0; }
+.video-row video { display: block; width: 100%; border-radius: 10px; }
+.video-row .figure-caption { margin-top: 0.3rem; }
+@media screen and (max-width: 768px) {
+  .video-row { flex-direction: column; }
+}
+/* The abstract text column is four fifths wide; let its video row use the full container. */
+@media screen and (min-width: 769px) {
+  .column.is-four-fifths > .video-row { width: 125%; margin-left: -12.5%; }
+}

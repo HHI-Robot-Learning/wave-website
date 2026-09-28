@@ -130,18 +130,24 @@
             We evaluate <span class="wave">WAVE</span> on cube arrangement tasks with a gantry robot and with a Franka Panda arm. Trained with at most nine cubes, it generalizes zero-shot to several times its training count, on the gantry to scenes of up to thirty cubes. Published methods that learn multi-object manipulation show count generalization up to six objects. Fine-tuning the skill, learning from the same local view without it, and an entity transformer, even when distilled from the pretrained skill, all collapse within their training counts.
           </p>
         </div>
-        <div class="video-grid is-2">
-          <div class="video-cell">
+        <div class="video-row">
+          <div class="video-cell" style="--ar: 1.333">
             <video autoplay controls muted loop playsinline preload="metadata">
               <source src="./static/videos/gantry_stacking_h3.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Gantry robot, cube stacking (h=3)</p>
+            <p class="figure-caption has-text-centered">Simulation: gantry robot, cube stacking (h=3)</p>
           </div>
-          <div class="video-cell">
+          <div class="video-cell" style="--ar: 1.333">
             <video autoplay controls muted loop playsinline preload="metadata">
               <source src="./static/videos/panda_stacking_h3_abstract.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Franka Panda, cube stacking (h=3)</p>
+            <p class="figure-caption has-text-centered">Simulation: Franka Panda, cube stacking (h=3)</p>
+          </div>
+          <div class="video-cell" style="--ar: 1.778">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/real_panda_tower5_5x.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Real Franka Panda: a policy fine-tuned for five-cube towers building a five-high tower (5&times; real time)</p>
           </div>
         </div>
       </div>
@@ -385,10 +391,14 @@
           <p>
             We deployed a stacking policy trained in simulation on a physical Panda arm, with cube poses tracked from AprilTag fiducials by four calibrated RGB cameras. It placed all five cubes of a two-tower task in 8 of 10 runs, and a policy fine-tuned for five-cube towers built a five-high tower.
           </p>
-          <img src="./static/images/real_series.png" alt="Start and end frames of real and simulated runs, three successes and two failures.">
-          <p class="figure-caption">Start and end of selected real runs next to the simulated replay of the same layout.</p>
-          <img src="./static/images/real_tower5.png" alt="Five-high tower built on the real robot.">
-          <p class="figure-caption">Five-high tower built on the real robot.</p>
+          <video class="real-video" controls muted playsinline preload="metadata" poster="./static/videos/real_panda_two_towers.jpg">
+            <source src="./static/videos/real_panda_two_towers.mp4" type="video/mp4">
+          </video>
+          <p class="figure-caption">All ten evaluation runs of the two-tower task (5&times; real time), with the simulated replay of each run inset at the top left.</p>
+          <video class="real-video" controls muted playsinline preload="metadata" poster="./static/videos/real_panda_tower5.jpg">
+            <source src="./static/videos/real_panda_tower5.mp4" type="video/mp4">
+          </video>
+          <p class="figure-caption">A policy fine-tuned for five-cube towers building a five-high tower (real time, with sound).</p>
         </div>
       </div>
     </div>
