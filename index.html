@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="WAVE extends a frozen single-object manipulation skill to many objects by learning to warp its inputs and actions. Trained with at most nine cubes, it generalizes zero-shot to thirty.">
+  <meta name="keywords" content="WAVE, object count generalization, frozen skill, warping policy, reinforcement learning, robot manipulation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WAVE: Warping a Frozen Skill Instead of Retraining It</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/wave.css">
+
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body, {delimiters: [{left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}]});"></script>
+  <script src="./static/js/data.js"></script>
+  <script defer src="./static/js/charts.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Object Count Generalization Is an Interface Problem: Warping a Frozen Skill Instead of Retraining It</h1>
+          <!-- TODO: wrap each name in <a href="..."> once personal pages are chosen. -->
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Paul Mattes<sup>1</sup>,</span>
+            <span class="author-block">Ayman Abdeldayem<sup>1</sup>,</span>
+            <span class="author-block">Denis Shcherba<sup>1</sup>,</span>
+            <span class="author-block">Wojciech Samek<sup>2</sup>,</span>
+            <span class="author-block">Marc Toussaint<sup>2</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup><a href="https://www.hhi.fraunhofer.de">Fraunhofer HHI</a>,</span>
+            <span class="author-block"><sup>2</sup><a href="https://www.tu.berlin">Technische Universität Berlin</a></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- TODO: add the links once the paper and code are public. -->
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled>
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled>
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled>
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code (Coming Soon)</span>
+                  </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/architecture.png" alt="Overview of WAVE: a selection policy picks one object, the frozen skill is shown only that object, and a warping policy edits every input and action channel of the skill.">
+      <h2 class="subtitle has-text-centered">
+        <span class="wave">WAVE</span> reuses a frozen single-object skill for many objects: trained with at most nine cubes, it arranges up to thirty.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item"><figure><img src="./static/images/snapshots/start.png" alt="Gantry start scene with fifteen cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/stacking_h3.png" alt="Gantry cube stacking of height 3, fifteen cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/stacking_h6.png" alt="Gantry cube stacking of height 6, fifteen cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/pyramid.png" alt="Gantry pyramid, fifteen cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/wall.png" alt="Gantry wall, fifteen cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/square.png" alt="Gantry square, fifteen cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/line.png" alt="Gantry line, fifteen cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/panda_stacking_h3.png" alt="Panda gripper cube stacking, ten cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/panda_pyramid.png" alt="Panda gripper pyramid, ten cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/panda_line.png" alt="Panda pusher line, ten cubes"></figure></div>
+        <div class="item"><figure><img src="./static/images/snapshots/panda_square.png" alt="Panda pusher square, ten cubes"></figure></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Reinforcement learning policies for robot manipulation degrade when the number of objects \(N\) in the scene grows beyond the training range. This is a covariate shift that also changes the dimension of the state. We propose <span class="wave">WAVE</span> (Warping Actions and Views of an Expert), which extends a pretrained single-object skill to many objects without updating its weights.
+          </p>
+          <p>
+            <span class="wave">WAVE</span> has three parts. First, a selection policy picks the one object the robot works on next. Second, a warping policy reads a local view of the scene around that object, whose size does not depend on \(N\). It emits a multiplier and an offset for every quantity the skill reads and every action it outputs. Third, the skill acts under this affine warp. It is shown a scene that holds a single object, while the warp steers it around the objects it is not shown and edits the actions that are sent to the robot. Both the selection and warping policies are trained with PPO on the multi-object reward and use the skill as a black box, so <span class="wave">WAVE</span> is task-general and skill-agnostic. It requires only that the skill was trained on the same embodiment and that every object has a goal pose. We also analyze the probability that the composition places all \(N\) objects within a budget of skill invocations that grows linearly in \(N\).
+          </p>
+          <p>
+            We evaluate <span class="wave">WAVE</span> on cube arrangement tasks with a gantry robot and with a Franka Panda arm. Trained with at most nine cubes, it generalizes zero-shot to several times its training count, on the gantry to scenes of up to thirty cubes. Published methods that learn multi-object manipulation show count generalization up to six objects. Fine-tuning the skill, learning from the same local view without it, and an entity transformer, even when distilled from the pretrained skill, all collapse within their training counts.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- Method. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method</h2>
+        <div class="content has-text-justified">
+          <p>
+            <span class="wave">WAVE</span> takes a skill \(\mu\) that can move a single object to its goal and uses it, without changing its weights, to arrange many objects. A selection policy picks one object \(x^*\) at a time, and \(\mu\) is shown a scene in which this object is the only one. The other objects are still there, so a warping policy \(\psi\) reads the neighborhood of the object and bends the inputs and actions of \(\mu\) where needed, for example to steer the robot around a stack or to let go of a cube on top of another:
+          </p>
+        </div>
+        <div class="content has-text-centered equation">
+          \[\pi_N(s) = W_{\mathrm{out}}\big(\mu\big(W_{\mathrm{in}}(\sigma(s, x^*);\,u)\big);\,u\big), \qquad u = \psi\big(\chi(s, x^*)\big)\]
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            The presentation \(\sigma\) shows \(\mu\) only \(x^*\) and its goal, and the crop \(\chi\) is a fixed-width local view around \(x^*\). For every channel \(j\) of \(\mu\)'s input and action, the warp applies \(\tilde z_j = m_j z_j + o_j\): at \(m_j = 1, o_j = 0\) the channel passes through unchanged, and at \(m_j = 0\) the warping policy takes it over. Editing the input makes \(\mu\) itself compute a corrected action; editing the output produces behavior \(\mu\) never learned, such as the release onto a stack.
+          </p>
+          <p>
+            <span class="wave">WAVE</span> generalizes to higher counts for two reasons. First, \(\mu\) can already place a single object, so it is a strong exploration prior and training only learns the corrections needed with many objects. Second, nothing \(\mu\) or the warping policy reads grows with the number of objects: thirty cubes produce the same kind of input as nine.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Warping Policy</h3>
+        <div class="content has-text-justified">
+          <img src="./static/images/warp_architecture.png" alt="Architecture of the warping policy.">
+          <p class="figure-caption">
+            A per-pair network scores every neighbor and an elementwise minimum reduces the scores to one neighborhood encoding, independent of the count. A small transformer emits one categorical distribution per warp parameter over a fixed grid. Every distribution starts on the identity, so training starts from the unwarped skill.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Bounded Completion Guarantee</h3>
+        <div class="content has-text-justified">
+          <p>
+            Whether <span class="wave">WAVE</span> completes a task of \(N\) objects within a number of skill invocations linear in \(N\) is decided by the net progress per attempt \(\rho = (1-\delta_{\mathrm{cov}})\,p_e - \lambda\). If \(\rho > 0\), then for every \(c > 1/\rho\)
+          </p>
+        </div>
+        <div class="content has-text-centered equation">
+          \[\Pr\big[\text{task not complete within } cN \text{ attempts}\big] \le \exp\!\left(-\frac{2(\rho c - 1)^2 N}{c\,(1+\lambda_{\max})^2}\right)\]
+        </div>
+      </div>
+    </div>
+    <!--/ Method. -->
+
+    <!-- Count generalization. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Count Generalization</h2>
+
+        <h3 class="title is-4">Gantry Robot</h3>
+        <div class="content has-text-justified">
+          <p>
+            Six cube arrangement tasks, each trained on one to between six and nine cubes and evaluated zero-shot on one to thirty. Trained on one to seven cubes, <span class="wave">WAVE</span> completes 0.95 of the stacking (\(h=3\)) episodes at twenty cubes and 0.48 at thirty, and 0.90 of the line episodes at thirty. It stays above the 0.75 that Li et al. report at six objects up to 23 cubes on stacking and up to 30 on the line.
+          </p>
+        </div>
+        <div class="line-chart" data-chart="gantry"></div>
+        <p class="figure-caption">
+          Whole-task success against the number of cubes \(N\). Colored: <span class="wave">WAVE</span> per task, mean over three seeds with the range shaded. Gray: published methods on their own tasks. Dashed red: the frozen skill alone. Hover for values, click a legend entry to hide it.
+        </p>
+
+        <h3 class="title is-4">Franka Panda Arm</h3>
+        <div class="content has-text-justified">
+          <p>
+            The same method and reward, with a parallel-jaw gripper for stacking, pyramid and wall, and a sphere-tip pusher for the line and square. With the pusher, <span class="wave">WAVE</span> completes 0.95 of the line episodes at nine cubes, 0.78 at fifteen and 0.62 at twenty. With the gripper, success already falls within the training range, mainly because the large body of the arm knocks neighbors off their goals.
+          </p>
+        </div>
+        <div class="line-chart" data-chart="panda"></div>
+        <div class="columns is-centered">
+          <div class="column">
+            <img src="./static/images/snapshots/panda_start.png" alt="Panda start scene with ten cubes">
+            <p class="figure-caption has-text-centered">Start, ten cubes</p>
+          </div>
+          <div class="column">
+            <img src="./static/images/snapshots/panda_stacking_h3.png" alt="Panda cube stacking completed">
+            <p class="figure-caption has-text-centered">Stacking (\(h=3\))</p>
+          </div>
+          <div class="column">
+            <img src="./static/images/snapshots/panda_wall.png" alt="Panda wall, nine of ten cubes placed">
+            <p class="figure-caption has-text-centered">Wall, nine of ten at the peak</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Count generalization. -->
+
+    <!-- Baselines. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Baselines</h2>
+        <div class="content has-text-justified">
+          <p>
+            We compare against nine baselines trained on the same gantry, task, reward and training counts, with the same skill wherever one is used. No baseline succeeds with more than five cubes, even when given a scripted rule that only offers objects whose goal is currently fulfillable, which <span class="wave">WAVE</span> does not use.
+          </p>
+        </div>
+        <div class="buttons has-addons is-centered chart-tabs" id="baseline-tabs">
+          <button type="button" class="button is-small is-dark" data-task="tower3">Cube stacking (h=3)</button>
+          <button type="button" class="button is-small" data-task="line">Line</button>
+        </div>
+        <div class="line-chart" data-chart="baselines"></div>
+
+        <div class="table-container">
+          <table class="table results is-fullwidth is-narrow is-hoverable">
+            <thead>
+              <tr>
+                <th rowspan="2">Method</th><th rowspan="2">\(\mu\)</th><th rowspan="2">Other objects</th><th rowspan="2">Selection</th>
+                <th colspan="5">line, \(N\)</th><th colspan="5">stacking (h=3), \(N\)</th>
+              </tr>
+              <tr><th>1</th><th>2</th><th>3</th><th>6</th><th>30</th><th>1</th><th>2</th><th>3</th><th>6</th><th>30</th></tr>
+            </thead>
+            <tbody>
+              <tr class="is-ours"><td><b>WAVE</b></td><td>frozen</td><td>crop</td><td>learned</td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>0.90</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>0.48</b></td></tr>
+              <tr><td>skill alone</td><td>frozen</td><td>none</td><td>scripted</td><td>0.79</td><td>0.35</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.97</td><td>0.17</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>TD7 on the crop</td><td>&ndash;</td><td>crop</td><td>scripted</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>fine-tuning \(\mu\) on the crop, \(\omega=1\)</td><td>fine-tuned</td><td>crop</td><td>scripted</td><td>0.96</td><td>0.43</td><td>0.03</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.98</td><td>0.64</td><td>0.03</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>HRL subgoals</td><td>frozen</td><td>crop</td><td>learned</td><td>0.54</td><td>0.18</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.83</td><td>0.53</td><td>0.10</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>EIT (Haramati et al., 2024)</td><td>&ndash;</td><td>all</td><td>&ndash;</td><td>0.20</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.53</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>EIT distilled from \(\mu\)</td><td>distilled</td><td>all</td><td>&ndash;</td><td>0.82</td><td>0.56</td><td>0.37</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.94</td><td>0.20</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="figure-caption">
+          Table: whole-task success, mean over three seeds; every seed of every baseline is at 0.00 at six and at thirty cubes. Chart: success pooled over every episode of 20 scenes per count and three seeds, so values differ slightly from the table.
+        </p>
+      </div>
+    </div>
+    <!--/ Baselines. -->
+
+    <!-- Ablations. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Ablations</h2>
+        <div class="content has-text-justified">
+          <p>
+            Warping only the input channels nearly matches the full warp, warping only the output channels collapses by ten cubes, and warps with only multipliers or only offsets fall in between. Random selection completes no episode with five or more cubes on stacking and the pyramid, while a fixed nearest-first rule matches the learned selection policy on stacking and the square and falls behind it on the pyramid.
+          </p>
+        </div>
+        <div class="buttons has-addons is-centered chart-tabs" id="ablation-kind">
+          <button type="button" class="button is-small is-dark" data-kind="side">Warp side</button>
+          <button type="button" class="button is-small" data-kind="component">Warp component</button>
+          <button type="button" class="button is-small" data-kind="selection">Selection rule</button>
+        </div>
+        <div class="buttons has-addons is-centered chart-tabs" id="ablation-task">
+          <button type="button" class="button is-small is-dark" data-task="tower3">Stacking (h=3)</button>
+          <button type="button" class="button is-small" data-task="square">Square</button>
+          <button type="button" class="button is-small" data-task="pyramid">Pyramid</button>
+        </div>
+        <div class="line-chart" data-chart="ablations"></div>
+
+        <h3 class="title is-4">When Is Each Side of the Warp Needed?</h3>
+        <div class="content has-text-justified">
+          <p>
+            We copy the simulator at every step of an episode and continue the copies with the input or the output warp switched off. Switching off the output warp delays mainly the release, since the frozen skill never releases a cube on its own. Switching off the input warp slows down every phase, by 0.95&ndash;1.56&nbsp;s, because it steers the skill throughout the episode.
+          </p>
+          <img src="./static/images/necessity_episode.png" alt="Interventional estimate of when the input and output warps are needed across the phases of an episode.">
+        </div>
+      </div>
+    </div>
+    <!--/ Ablations. -->
+
+    <!-- Real robot. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Real-World Panda</h2>
+        <div class="content has-text-justified">
+          <p>
+            We deployed a stacking policy trained in simulation on a physical Panda arm, with cube poses tracked from AprilTag fiducials by four calibrated RGB cameras. It placed all five cubes of a two-tower task in 8 of 10 runs, and a policy fine-tuned for five-cube towers built a five-high tower.
+          </p>
+          <img src="./static/images/real_series.png" alt="Start and end frames of real and simulated runs, three successes and two failures.">
+          <p class="figure-caption">Start and end of selected real runs next to the simulated replay of the same layout.</p>
+          <img src="./static/images/real_tower5.png" alt="Five-high tower built on the real robot.">
+          <p class="figure-caption">Five-high tower built on the real robot.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Real robot. -->
+
+    <!-- Related work. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Related Links</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            <a href="https://arxiv.org/abs/2404.01220">Entity-Centric Reinforcement Learning</a> introduces the Entity Interaction Transformer, which we compare against both trained directly and distilled from the frozen skill.
+          </p>
+          <p>
+            <a href="https://arxiv.org/abs/1912.11032">Relational RL for multi-object manipulation</a> and <a href="https://arxiv.org/abs/2506.04168">SHARSA</a> learn the manipulation itself and report whole-task success of at most 0.75 at six and 0.36 at eight objects.
+          </p>
+          <p>
+            <a href="https://arxiv.org/abs/1812.06298">Residual Policy Learning</a>, <a href="https://arxiv.org/abs/1812.03201">Residual RL</a> and <a href="https://arxiv.org/abs/2606.31043">Warp RL</a> keep a trained policy frozen and learn a correction on its actions, close to warping only the output side of the skill.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Related work. -->
+
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <!-- TODO: switch to @inproceedings with the venue once accepted. -->
+    <pre><code>@misc{wave2026,
+  author    = {Mattes, Paul and Abdeldayem, Ayman and Shcherba, Denis and Samek, Wojciech and Toussaint, Marc},
+  title     = {Object Count Generalization Is an Interface Problem: Warping a Frozen Skill Instead of Retraining It},
+  year      = {2026},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" disabled>
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            Website template borrowed from <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
