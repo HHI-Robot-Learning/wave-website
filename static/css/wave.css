@@ -4,15 +4,26 @@
   font-variant: small-caps;
 }
 
-.results-carousel figure {
-  margin: 0;
+/* Task videos: a grid of looping clips with a caption under each. */
+.video-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0 1.5rem;
 }
-
-.results-carousel img {
+.video-grid.is-2 { grid-template-columns: repeat(2, 1fr); }
+.video-grid.is-3 { grid-template-columns: repeat(3, 1fr); }
+.video-grid video {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  border-radius: 10px;
+}
+.video-grid .figure-caption { margin-top: 0.3rem; }
+
+@media screen and (max-width: 768px) {
+  .video-grid.is-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media screen and (max-width: 480px) {
+  .video-grid.is-2, .video-grid.is-3 { grid-template-columns: 1fr; }
 }
 
 .figure-caption {
@@ -151,7 +162,6 @@ html[data-theme="dark"] .publication-authors { color: #c9ccd1; }
 html[data-theme="dark"] .publication-authors a { color: #5eb4f5 !important; }
 html[data-theme="dark"] a { color: #6ea8ff; }
 html[data-theme="dark"] .hero.is-light { background: #1f2227; }
-html[data-theme="dark"] .results-carousel .item { border-color: #3a3e45; }
 html[data-theme="dark"] .footer { background: #1f2227; }
 html[data-theme="dark"] .footer .icon-link { color: #eceef1; }
 html[data-theme="dark"] .content pre { background: #1f2227; color: #d6d9de; }

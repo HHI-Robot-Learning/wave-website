@@ -12,7 +12,6 @@
         rel="stylesheet">
 
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
@@ -20,7 +19,6 @@
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="stylesheet" href="./static/css/wave.css">
 
-  <script src="./static/js/bulma-carousel.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
           onload="renderMathInElement(document.body, {delimiters: [{left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}]});"></script>
@@ -112,27 +110,6 @@
 </section>
 
 
-<section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item"><figure><img src="./static/images/snapshots/start.png" alt="Gantry start scene with fifteen cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/stacking_h3.png" alt="Gantry cube stacking of height 3, fifteen cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/stacking_h6.png" alt="Gantry cube stacking of height 6, fifteen cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/pyramid.png" alt="Gantry pyramid, fifteen cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/wall.png" alt="Gantry wall, fifteen cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/square.png" alt="Gantry square, fifteen cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/line.png" alt="Gantry line, fifteen cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/panda_stacking_h3.png" alt="Panda gripper cube stacking, ten cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/panda_pyramid.png" alt="Panda gripper pyramid, ten cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/panda_line.png" alt="Panda pusher line, ten cubes"></figure></div>
-        <div class="item"><figure><img src="./static/images/snapshots/panda_square.png" alt="Panda pusher square, ten cubes"></figure></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
 <section class="section">
   <div class="container is-max-desktop">
     <!-- Abstract. -->
@@ -149,6 +126,20 @@
           <p>
             We evaluate <span class="wave">WAVE</span> on cube arrangement tasks with a gantry robot and with a Franka Panda arm. Trained with at most nine cubes, it generalizes zero-shot to several times its training count, on the gantry to scenes of up to thirty cubes. Published methods that learn multi-object manipulation show count generalization up to six objects. Fine-tuning the skill, learning from the same local view without it, and an entity transformer, even when distilled from the pretrained skill, all collapse within their training counts.
           </p>
+        </div>
+        <div class="video-grid is-2">
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/gantry_stacking_h3.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Gantry robot, cube stacking (h=3)</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/panda_stacking_h3_abstract.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Franka Panda, cube stacking (h=3)</p>
+          </div>
         </div>
       </div>
     </div>
@@ -213,6 +204,44 @@
             Six cube arrangement tasks, each trained on one to between six and nine cubes and evaluated zero-shot on one to thirty. Trained on one to seven cubes, <span class="wave">WAVE</span> completes 0.95 of the stacking (\(h=3\)) episodes at twenty cubes and 0.48 at thirty, and 0.90 of the line episodes at thirty. It stays above the 0.75 that Li et al. report at six objects up to 23 cubes on stacking and up to 30 on the line.
           </p>
         </div>
+        <div class="video-grid is-3">
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/gantry_stacking_h3.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Stacking (h=3)</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/gantry_stacking_h6.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Stacking (h=6)</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/gantry_pyramid.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Pyramid</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/gantry_wall.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Wall</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/gantry_square.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Square</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/gantry_line.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Line</p>
+          </div>
+        </div>
         <div class="line-chart" data-chart="gantry"></div>
         <p class="figure-caption">
           Whole-task success against the number of cubes \(N\). Colored: <span class="wave">WAVE</span> per task, mean over three seeds with the range shaded. Gray: published methods on their own tasks. Dashed red: the frozen skill alone. Hover for values, click a legend entry to hide it.
@@ -224,21 +253,42 @@
             The same method and reward, with a parallel-jaw gripper for stacking, pyramid and wall, and a sphere-tip pusher for the line and square. With the pusher, <span class="wave">WAVE</span> completes 0.95 of the line episodes at nine cubes, 0.78 at fifteen and 0.62 at twenty. With the gripper, success already falls within the training range, mainly because the large body of the arm knocks neighbors off their goals.
           </p>
         </div>
-        <div class="line-chart" data-chart="panda"></div>
-        <div class="columns is-centered">
-          <div class="column">
-            <img src="./static/images/snapshots/panda_start.png" alt="Panda start scene with ten cubes">
-            <p class="figure-caption has-text-centered">Start, ten cubes</p>
+        <div class="video-grid is-3">
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/panda_stacking_h3.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Gripper, stacking (h=3)</p>
           </div>
-          <div class="column">
-            <img src="./static/images/snapshots/panda_stacking_h3.png" alt="Panda cube stacking completed">
-            <p class="figure-caption has-text-centered">Stacking (\(h=3\))</p>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/panda_pyramid.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Gripper, pyramid</p>
           </div>
-          <div class="column">
-            <img src="./static/images/snapshots/panda_wall.png" alt="Panda wall, nine of ten cubes placed">
-            <p class="figure-caption has-text-centered">Wall, nine of ten at the peak</p>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/panda_wall.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Gripper, wall</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/panda_push_line.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Pusher, line</p>
+          </div>
+          <div class="video-cell">
+            <video autoplay controls muted loop playsinline preload="metadata">
+              <source src="./static/videos/panda_push_square.mp4" type="video/mp4">
+            </video>
+            <p class="figure-caption has-text-centered">Pusher, square</p>
           </div>
         </div>
+        <div class="line-chart" data-chart="panda"></div>
+        <p class="figure-caption">
+          Whole-task success on the Panda arm for every evaluated count (gripper tasks to 15, pusher line to 20, pusher square to 30).
+        </p>
       </div>
     </div>
     <!--/ Count generalization. -->
