@@ -18,6 +18,7 @@ Skill Instead of Retraining It* (WAVE), built on the
 | `static/images/` | remaining paper figures copied from `../2026-ICLR-WAVE-NEW/figures` |
 | `static/videos/` | task clips (abstract, gantry and Panda sections), cropped from the wandb `MOGB/wave` training montages |
 | `static/videos/real_*.mp4` | real-robot videos, re-encoded from `real_world/` (`ffmpeg -crf 30` / `-crf 27`) |
+| `static/js/warp_viewer.js`, `warp_data.js`, `static/videos/warp/` | the Warp Explorer section; data and episode videos come from a Warp Explorer recording via `python3 scripts/build_warp_data.py [runs/<run>/n<count>]` |
 | `scripts/fetch_videos.py` | re-downloads and re-encodes those clips (`../26-MOGB/.venv/bin/python scripts/fetch_videos.py`) |
 | `scripts/build_data.py` | regenerates `data.js` from the paper's `count_curve_data.csv` |
 
