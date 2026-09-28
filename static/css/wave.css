@@ -342,3 +342,25 @@ html[data-theme="dark"] .fig-hotspot:hover,
 html[data-theme="dark"] .fig-hotspot:focus-visible,
 html[data-theme="dark"] .fig-hotspot.is-active { border-color: rgba(110, 168, 255, 0.8); background: rgba(110, 168, 255, 0.08); }
 html[data-theme="dark"] .figure-hint { color: #7d838b; }
+
+/* ── Text emphasis, in Figure 1's color code ──
+   blue: trained parts (selection and warping policy), slate: the frozen skill,
+   orange: the warp itself, bold: key results. */
+:root {
+  --c-trained: #1f5fbf;
+  --c-frozen: #5b6472;
+  --c-warp: #d0580f;
+}
+html[data-theme="dark"] {
+  --c-trained: #6ea8ff;
+  --c-frozen: #aab2bf;
+  --c-warp: #f0894a;
+}
+.wave { color: var(--c-trained); font-weight: 600; }
+.term-trained { color: var(--c-trained); font-weight: 600; }
+.term-frozen { color: var(--c-frozen); font-weight: 600; }
+.term-warp { color: var(--c-warp); font-weight: 600; }
+.key { font-weight: 700; color: #363636; }
+html[data-theme="dark"] .key { color: #eceef1; }
+.publication-title .title-accent { color: var(--c-trained); }
+.publication-title .title-warp { color: var(--c-warp); }
