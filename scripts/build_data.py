@@ -34,6 +34,18 @@ PUBLISHED = {
     "pub_sharsa_mean": "SHARSA '25, five-goal mean",
     "pub_sharsa_stack": "SHARSA '25, stacking",
 }
+# Direct labels for the published series: (x, y, anchor), copied from PUB_LABEL_POS in the paper's
+# count_curve.py; anchor is the point a leader line runs to, or None.
+PUB_LABEL_POS = {
+    "pub_li2020": (6.5, 0.67, None),
+    "pub_ecrl": (6.5, 0.47, None),
+    "pub_hecrl": (6.5, 0.25, None),
+    "pub_pair": (6.5, 0.865, None),
+    "pub_lanier": (7.3, 0.57, (4, 0.79)),
+    "pub_ogbench": (2.8, 0.10, None),
+    "pub_sharsa_mean": (8.4, 0.36, None),
+    "pub_sharsa_stack": (8.3, 0.05, None),
+}
 BASELINES = {
     "wave": ("WAVE", "#1f5fbf"),
     "skill_alone": ("skill alone (μ)", "#9a2e35"),
@@ -72,7 +84,7 @@ def series(key, label, color, **extra):
 data = {
     "gantry": [series(f"ours_{t}", l, c) for t, (l, c) in TASKS.items()]
     + [series("skill_alone", "skill alone, stacking (h=3)", "#9a2e35", dash=True)]
-    + [series(k, l, GRAY, published=True) for k, l in PUBLISHED.items()],
+    + [series(k, l, GRAY, published=True, label_pos=PUB_LABEL_POS[k]) for k, l in PUBLISHED.items()],
     "panda": [series(f"panda_{t}", l, c) for t, (l, c) in TASKS.items() if rows.get(f"panda_{t}")],
     "baselines": {
         task: [series(f"bl_{arm}_{task}", l, c, dash=arm == "skill_alone") for arm, (l, c) in BASELINES.items()

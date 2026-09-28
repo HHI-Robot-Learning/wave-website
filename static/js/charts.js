@@ -83,6 +83,18 @@
       groups.unshift({ s: s, g: g, pts: pts });
     });
 
+    // Direct labels at the paper's positions (with a leader line when there is an anchor point),
+    // drawn above every series so no line crosses them.
+    var labelLayer = el('g', { class: 'draw' }, svg);
+    groups.forEach(function (it) {
+      var p = it.s.label_pos;
+      if (!p) return;
+      var lg = el('g', {}, labelLayer), lx = x(p[0]), ly = y(p[1]);
+      if (p[2]) el('line', { class: 'series-label-leader', x1: x(p[2][0]), y1: y(p[2][1]), x2: lx - 3, y2: ly }, lg);
+      el('text', { class: 'series-label', x: lx, y: ly, 'dominant-baseline': 'central' }, lg).textContent = it.s.label;
+      it.label = lg;
+    });
+
     // Legend: one entry per series, published methods collapsed into one toggle.
     var legend = document.createElement('div');
     legend.className = 'chart-legend';
@@ -106,7 +118,10 @@
       b.addEventListener('click', function () {
         var off = b.classList.toggle('is-off');
         b.setAttribute('aria-pressed', String(!off));
-        e.items.forEach(function (it) { it.g.classList.toggle('is-hidden', off); it.hidden = off; });
+        e.items.forEach(function (it) {
+          it.g.classList.toggle('is-hidden', off); it.hidden = off;
+          if (it.label) it.label.style.display = off ? 'none' : '';
+        });
       });
       b.addEventListener('mouseenter', function () {
         container.classList.add('has-focus');

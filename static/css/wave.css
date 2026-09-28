@@ -444,3 +444,20 @@ html[data-theme="dark"] .toc-list a.is-active { color: var(--c-trained); }
 /* Section jumps land a little below the window's top edge. */
 html { scroll-behavior: smooth; scroll-padding-top: 16px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .toc { transition: none; } }
+
+/* Direct labels of the published methods, as in the paper's figure: gray text with a halo in the
+   background color so it stays readable over lines and bands. */
+.line-chart .series-label {
+  font-size: 11px;
+  fill: #8a8f96;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.line-chart .series-label-leader { stroke: #9aa0a6; stroke-width: 1; }
+.line-chart .draw .series-label, .line-chart .draw .series-label-leader { opacity: 0; }
+.line-chart.in-view .draw .series-label, .line-chart.in-view .draw .series-label-leader { transition: opacity 0.4s ease 1s; opacity: 1; }
+html[data-theme="dark"] .line-chart .series-label { fill: #9aa0a8; stroke: #171717; }
+html[data-theme="dark"] .line-chart .series-label-leader { stroke: #6b7078; }
