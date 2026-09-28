@@ -364,3 +364,83 @@ html[data-theme="dark"] {
 html[data-theme="dark"] .key { color: #eceef1; }
 .publication-title .title-accent { color: var(--c-trained); }
 .publication-title .title-warp { color: var(--c-warp); }
+
+/* ── Table of contents: fixed on the left, collapsed behind an arrow tab ── */
+.toc {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  transform: translate(-260px, -50%);
+  transition: transform 0.25s ease;
+}
+.toc.is-open { transform: translate(0, -50%); }
+.toc-panel {
+  order: 1;
+  width: 260px;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 0.9rem 1rem 0.9rem 1.1rem;
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  font-size: 0.85rem;
+  visibility: hidden;
+  transition: visibility 0.25s;
+}
+.toc.is-open .toc-panel { visibility: visible; }
+.toc-toggle {
+  order: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 56px;
+  padding: 0;
+  border: 1px solid #e3e3e3;
+  border-left: 0;
+  border-radius: 0 8px 8px 0;
+  background: #fff;
+  color: #4a4a4a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+.toc-toggle:hover { color: var(--c-trained); }
+.toc.is-open .toc-toggle { box-shadow: none; }
+.toc-title {
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7a7a7a;
+}
+.toc-list, .toc-list ol { list-style: none; margin: 0; padding: 0; }
+.toc-list ol { margin: 0.1rem 0 0.3rem 0.8rem; }
+.toc-list a {
+  display: block;
+  padding: 0.2rem 0 0.2rem 0.6rem;
+  border-left: 2px solid transparent;
+  color: #4a4a4a;
+  line-height: 1.35;
+}
+.toc-list ol a { color: #7a7a7a; font-size: 0.95em; }
+.toc-list a:hover { color: var(--c-trained); }
+.toc-list a.is-active { color: var(--c-trained); border-left-color: var(--c-trained); font-weight: 600; }
+
+html[data-theme="dark"] .toc-panel,
+html[data-theme="dark"] .toc-toggle { background: #1f2227; border-color: #33373d; }
+html[data-theme="dark"] .toc-toggle,
+html[data-theme="dark"] .toc-list a { color: #c9ccd1; }
+html[data-theme="dark"] .toc-list ol a,
+html[data-theme="dark"] .toc-title { color: #8a9099; }
+html[data-theme="dark"] .toc-list a:hover,
+html[data-theme="dark"] .toc-list a.is-active { color: var(--c-trained); }
+
+/* Section jumps land a little below the window's top edge. */
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .toc { transition: none; } }

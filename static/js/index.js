@@ -156,3 +156,64 @@ function addHotspots(box, w, h) {
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
   return layer;
 }
+
+// Table of contents: built from the section headings that have an id (h2 = section,
+// h3 = sub-section), collapsed behind an arrow tab, and tracking the section in view.
+document.addEventListener('DOMContentLoaded', function () {
+  var toc = document.getElementById('toc');
+  if (!toc) return;
+  var list = toc.querySelector('.toc-list');
+  var toggle = document.getElementById('toc-toggle');
+  var headings = document.querySelectorAll('h2.title[id], h3.title.is-4[id]');
+  var links = [];
+  var current = null;
+
+  headings.forEach(function (h) {
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    li.appendChild(a);
+    if (h.tagName === 'H3' && current) {
+      var sub = current.querySelector('ol') || current.appendChild(document.createElement('ol'));
+      sub.appendChild(li);
+    } else {
+      list.appendChild(li);
+      current = li;
+    }
+    links.push({ a: a, target: h });
+  });
+
+  function setOpen(open) {
+    toc.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Hide table of contents' : 'Show table of contents');
+    toggle.querySelector('i').className = open ? 'fas fa-chevron-left' : 'fas fa-chevron-right';
+    try { localStorage.setItem('toc-open', open ? '1' : '0'); } catch (e) {}
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('toc-open'); } catch (e) {}
+  setOpen(saved === '1' && window.innerWidth > 1024);
+
+  toggle.addEventListener('click', function () { setOpen(!toc.classList.contains('is-open')); });
+  // On narrow screens the panel covers the page, so close it after jumping.
+  list.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A' && window.innerWidth <= 1024) setOpen(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && toc.classList.contains('is-open')) setOpen(false);
+  });
+
+  // Highlight the last heading that has scrolled past the top third of the window.
+  var ticking = false;
+  function spy() {
+    ticking = false;
+    var line = window.innerHeight / 3, active = null;
+    links.forEach(function (l) { if (l.target.getBoundingClientRect().top <= line) active = l; });
+    links.forEach(function (l) { l.a.classList.toggle('is-active', l === active); });
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(spy); }
+  }, { passive: true });
+  spy();
+});

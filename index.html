@@ -37,6 +37,16 @@
 </head>
 <body>
 
+<nav class="toc" id="toc" aria-label="Table of contents">
+  <button type="button" class="toc-toggle" id="toc-toggle" aria-expanded="false" aria-controls="toc-panel" aria-label="Show table of contents">
+    <span class="icon"><i class="fas fa-chevron-right"></i></span>
+  </button>
+  <div class="toc-panel" id="toc-panel">
+    <p class="toc-title">Contents</p>
+    <ol class="toc-list"></ol>
+  </div>
+</nav>
+
 <button type="button" class="button is-rounded theme-toggle" id="theme-toggle" aria-label="Switch to dark mode">
   <span class="icon"><i class="fas fa-moon"></i></span>
 </button>
@@ -120,7 +130,7 @@
     <!-- Abstract. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
+        <h2 class="title is-3" id="abstract">Abstract</h2>
         <div class="content has-text-justified">
           <p>
             Reinforcement learning policies for robot manipulation degrade when the number of objects \(N\) in the scene grows beyond the training range. This is a covariate shift that also changes the dimension of the state. We propose <span class="wave">WAVE</span> (<b>W</b>arping <b>A</b>ctions and <b>V</b>iews of an <b>E</b>xpert), which extends a <span class="term-frozen">pretrained single-object skill</span> to many objects <strong class="key">without updating its weights</strong>.
@@ -213,7 +223,7 @@
       <div class="column is-full-width">
         <h2 class="title is-3" id="results">Count Generalization</h2>
 
-        <h3 class="title is-4">Gantry Robot</h3>
+        <h3 class="title is-4" id="gantry">Gantry Robot</h3>
         <div class="content has-text-justified">
           <p>
             Six cube arrangement tasks, each trained on one to between six and nine cubes and evaluated zero-shot on one to thirty. Trained on one to seven cubes, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the stacking (\(h=3\)) episodes at twenty cubes and <strong class="key">0.48</strong> at thirty, and <strong class="key">0.90</strong> of the line episodes at thirty. It stays above the 0.75 that Li et al. report at six objects up to <strong class="key">23 cubes</strong> on stacking and up to <strong class="key">30</strong> on the line.
@@ -262,7 +272,7 @@
           Whole-task success against the number of cubes \(N\). Colored: <span class="wave">WAVE</span> per task, mean over three seeds with the range shaded. Gray: published methods on their own tasks. Dashed red: the frozen skill alone. Hover for values, click a legend entry to hide it.
         </p>
 
-        <h3 class="title is-4">Franka Panda Arm</h3>
+        <h3 class="title is-4" id="panda">Franka Panda Arm</h3>
         <div class="content has-text-justified">
           <p>
             The same method and reward, with a parallel-jaw gripper for stacking, pyramid and wall, and a sphere-tip pusher for the line and square. With the pusher, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the line episodes at nine cubes, <strong class="key">0.78</strong> at fifteen and <strong class="key">0.62</strong> at twenty. With the gripper, success already falls within the training range, mainly because the large body of the arm knocks neighbors off their goals.
@@ -311,7 +321,7 @@
     <!-- Baselines. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Baselines</h2>
+        <h2 class="title is-3" id="baselines">Baselines</h2>
         <div class="content has-text-justified">
           <p>
             We compare against nine baselines trained on the same gantry, task, reward and training counts, with the same skill wherever one is used. <strong class="key">No baseline succeeds with more than five cubes</strong>, even when given a scripted rule that only offers objects whose goal is currently fulfillable, which <span class="wave">WAVE</span> does not use.
@@ -371,7 +381,7 @@
         </div>
         <div class="line-chart" data-chart="ablations"></div>
 
-        <h3 class="title is-4">When Is Each Side of the Warp Needed?</h3>
+        <h3 class="title is-4" id="necessity">When Is Each Side of the Warp Needed?</h3>
         <div class="content has-text-justified">
           <p>
             We copy the simulator at every step of an episode and continue the copies with the input or the output warp switched off. Switching off the <span class="term-warp">output warp</span> delays mainly <strong class="key">the release</strong>, since the frozen skill never releases a cube on its own. Switching off the <span class="term-warp">input warp</span> slows down <strong class="key">every phase</strong>, by 0.95&ndash;1.56&nbsp;s, because it steers the skill throughout the episode.
@@ -389,7 +399,7 @@
     <!-- Real robot. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Real-World Panda</h2>
+        <h2 class="title is-3" id="real-world">Real-World Panda</h2>
         <div class="content has-text-justified">
           <p>
             We deployed a stacking policy trained in simulation on a physical Panda arm, with cube poses tracked from AprilTag fiducials by four calibrated RGB cameras. It placed all five cubes of a two-tower task in <strong class="key">8 of 10 runs</strong>, and a policy fine-tuned for five-cube towers built <strong class="key">a five-high tower</strong>.
@@ -410,7 +420,7 @@
     <!-- Related work. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Related Links</h2>
+        <h2 class="title is-3" id="related">Related Links</h2>
 
         <div class="content has-text-justified">
           <p>
@@ -433,7 +443,7 @@
 
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
+    <h2 class="title" id="bibtex">BibTeX</h2>
     <!-- TODO: switch to @inproceedings with the venue once accepted. -->
     <pre><code>@misc{wave2026,
   author    = {Mattes, Paul and Abdeldayem, Ayman and Shcherba, Denis and Samek, Wojciech and Toussaint, Marc},
