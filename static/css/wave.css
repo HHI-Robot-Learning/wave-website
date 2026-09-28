@@ -264,3 +264,25 @@ html[data-theme="dark"] .dark-plot .dark-plot-keep {
 @media screen and (min-width: 769px) {
   .column.is-four-fifths > .video-row { width: 125%; margin-left: -12.5%; }
 }
+
+/* Affiliation logos under the author list, each with its affiliation number. */
+.affiliation-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 0.75rem 0 0.25rem;
+}
+.affiliation-logos .logo-item {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.2rem;
+  color: #4a4a4a;
+}
+.affiliation-logos img { display: block; height: 44px; width: auto; }
+/* Fraunhofer's lettering is black, so dark mode swaps in a variant with light lettering. */
+.affiliation-logos .logo-dark { display: none; }
+html[data-theme="dark"] .affiliation-logos .logo-light { display: none; }
+html[data-theme="dark"] .affiliation-logos .logo-dark { display: block; }
+html[data-theme="dark"] .affiliation-logos .logo-item { color: #c9ccd1; }
