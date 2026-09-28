@@ -65,9 +65,9 @@
     h('span', 'wv-label', speedBox, 'Speed');
     var SPEEDS = [0.25, 0.5, 1, 2, 4];
     var speed = h('input', '', speedBox);
-    speed.type = 'range'; speed.min = 0; speed.max = SPEEDS.length - 1; speed.step = 1; speed.value = 2;
+    speed.type = 'range'; speed.min = 0; speed.max = SPEEDS.length - 1; speed.step = 1; speed.value = 0;  // 0.25x by default
     speed.setAttribute('aria-label', 'Playback speed');
-    var speedVal = h('span', 'wv-speed-val', speedBox, '1\u00d7');
+    var speedVal = h('span', 'wv-speed-val', speedBox, SPEEDS[0] + '\u00d7');
     var readout = h('p', 'wv-readout', root);
 
     // ── main: video + panels ──
@@ -403,7 +403,8 @@
       k = 0;
       loadScene(i);
       video.src = D.episodes[i].video;
-      video.playbackRate = SPEEDS[+speed.value];
+      // Loading a new source resets playbackRate to defaultPlaybackRate, so set both.
+      video.defaultPlaybackRate = video.playbackRate = SPEEDS[+speed.value];
       drawTimeline();
       render();
       if (autoplay) setPlaying(true);
@@ -427,7 +428,7 @@
     fwd.addEventListener('click', function () { step(1); });
     speed.addEventListener('input', function () {
       var r = SPEEDS[+speed.value];
-      video.playbackRate = r;
+      video.defaultPlaybackRate = video.playbackRate = r;
       speedVal.textContent = r + '\u00d7';
     });
     // Arrow keys step one decision, space plays and pauses, while the viewer has focus.

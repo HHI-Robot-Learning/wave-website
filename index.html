@@ -144,25 +144,40 @@
             We evaluate <span class="wave">WAVE</span> on cube arrangement tasks with a gantry robot and with a Franka Panda arm. Trained with at most nine cubes, it <strong class="key">generalizes zero-shot to several times its training count</strong>, on the gantry to scenes of up to <strong class="key">thirty cubes</strong>. Published methods that learn multi-object manipulation show count generalization up to <strong class="key">six objects</strong>. Fine-tuning the skill, learning from the same local view without it, and an entity transformer, even when distilled from the pretrained skill, all <strong class="key">collapse within their training counts</strong>.
           </p>
         </div>
-        <div class="video-row">
-          <div class="video-cell" style="--ar: 1.333">
-            <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/gantry_stacking_h3.mp4" type="video/mp4">
-            </video>
-            <p class="figure-caption has-text-centered">Simulation: gantry robot, cube stacking (h=3)</p>
+        <div class="video-carousel" id="abstract-videos">
+          <button type="button" class="vc-arrow vc-prev" aria-label="Previous video"><span class="icon"><i class="fas fa-chevron-left"></i></span></button>
+          <div class="vc-track">
+            <div class="vc-cell" style="--ar: 1.333">
+              <video autoplay controls muted loop playsinline preload="metadata">
+                <source src="./static/videos/gantry_stacking_h3.mp4" type="video/mp4">
+              </video>
+              <p class="figure-caption has-text-centered"><a class="vc-title" href="#gantry">Simulation: gantry robot, cube stacking (h=3)</a></p>
+            </div>
+            <div class="vc-cell" style="--ar: 1.333">
+              <video autoplay controls muted loop playsinline preload="metadata">
+                <source src="./static/videos/panda_stacking_h3_abstract.mp4" type="video/mp4">
+              </video>
+              <p class="figure-caption has-text-centered"><a class="vc-title" href="#panda">Simulation: Franka Panda, cube stacking (h=3)</a></p>
+            </div>
+            <div class="vc-cell" style="--ar: 1.778">
+              <video autoplay controls muted loop playsinline preload="metadata">
+                <source src="./static/videos/real_panda_tower5_5x.mp4" type="video/mp4">
+              </video>
+              <p class="figure-caption has-text-centered"><a class="vc-title" href="#real-world">Real Franka Panda: a policy fine-tuned for five-cube towers building a five-high tower (5&times; real time)</a></p>
+            </div>
+            <div class="vc-cell" style="--ar: 1.339">
+              <a href="#warp-explorer" class="video-link" aria-label="Go to the Warp Explorer">
+                <video class="theme-light-only" autoplay muted loop playsinline preload="metadata">
+                  <source src="./static/videos/warp_explorer_teaser.mp4" type="video/mp4">
+                </video>
+                <video class="theme-dark-only" autoplay muted loop playsinline preload="metadata">
+                  <source src="./static/videos/warp_explorer_teaser_dark.mp4" type="video/mp4">
+                </video>
+              </a>
+              <p class="figure-caption has-text-centered"><a class="vc-title" href="#warp-explorer">Warp Explorer: what the warp changes at every decision</a></p>
+            </div>
           </div>
-          <div class="video-cell" style="--ar: 1.333">
-            <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/panda_stacking_h3_abstract.mp4" type="video/mp4">
-            </video>
-            <p class="figure-caption has-text-centered">Simulation: Franka Panda, cube stacking (h=3)</p>
-          </div>
-          <div class="video-cell" style="--ar: 1.778">
-            <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/real_panda_tower5_5x.mp4" type="video/mp4">
-            </video>
-            <p class="figure-caption has-text-centered">Real Franka Panda: a policy fine-tuned for five-cube towers building a five-high tower (5&times; real time)</p>
-          </div>
+          <button type="button" class="vc-arrow vc-next" aria-label="Next video"><span class="icon"><i class="fas fa-chevron-right"></i></span></button>
         </div>
       </div>
     </div>

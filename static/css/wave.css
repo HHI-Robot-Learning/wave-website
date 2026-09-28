@@ -248,21 +248,50 @@ html[data-theme="dark"] .dark-plot .dark-plot-keep {
   background: #000;
 }
 
-/* Abstract videos: one row, each cell as wide as its aspect ratio (--ar) so all clips share a height. */
-.video-row {
+/* Abstract videos: a horizontally sliding row. Every clip has the same height and a width set by
+   its aspect ratio (--ar); the row scrolls and snaps clip by clip, with arrows on the sides. */
+.video-carousel { position: relative; margin: 1.25rem 0 1.5rem; --vc-h: 250px; }
+.vc-track {
   display: flex;
   gap: 1rem;
-  margin: 1.25rem 0 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 0 0 0.25rem;
 }
-.video-row .video-cell { flex: var(--ar) 1 0; min-width: 0; }
-.video-row video { display: block; width: 100%; border-radius: 10px; }
-.video-row .figure-caption { margin-top: 0.3rem; }
-@media screen and (max-width: 768px) {
-  .video-row { flex-direction: column; }
+.vc-track::-webkit-scrollbar { display: none; }
+.vc-cell { flex: 0 0 calc(var(--vc-h) * var(--ar)); scroll-snap-align: start; }
+.vc-cell video { display: block; width: 100%; height: var(--vc-h); object-fit: cover; border-radius: 10px; }
+.vc-cell .figure-caption { margin-top: 0.35rem; }
+.vc-title { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; text-decoration-color: #b5b5b5; }
+.vc-title:hover { color: var(--c-trained); text-decoration: underline; }
+.vc-arrow {
+  position: absolute;
+  top: calc(var(--vc-h) / 2);
+  z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  border: 1px solid #e3e3e3; border-radius: 50%;
+  background: #fff; color: #4a4a4a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
 }
-/* The abstract text column is four fifths wide; let its video row use the full container. */
+.vc-prev { left: -14px; }
+.vc-next { right: -14px; }
+.vc-arrow:hover { color: var(--c-trained); }
+.vc-arrow[disabled] { opacity: 0; pointer-events: none; }
+html[data-theme="dark"] .vc-arrow { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
+html[data-theme="dark"] .vc-title:hover { color: var(--c-trained); }
 @media screen and (min-width: 769px) {
-  .column.is-four-fifths > .video-row { width: 125%; margin-left: -12.5%; }
+  .column.is-four-fifths > .video-carousel { width: 125%; margin-left: -12.5%; }
+}
+@media screen and (max-width: 768px) {
+  .video-carousel { --vc-h: 200px; }
+  .vc-prev { left: 4px; }
+  .vc-next { right: 4px; }
 }
 
 /* Affiliation logos under the author list, each with its affiliation number. */
@@ -582,3 +611,11 @@ html[data-theme="dark"] .warp-viewer {
 .wv-dash { display: inline-block; width: 16px; margin: 0 0.3rem 0 0.7rem; border-top: 2px dashed var(--sc-warp); vertical-align: 3px; }
 html[data-theme="dark"] .wv-toggles .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
 html[data-theme="dark"] .wv-toggles .button.is-dark { background: #eceef1; color: #171717; }
+/* A video tile that links to a section (the Warp Explorer teaser in the abstract row). */
+.video-link { display: block; }
+.video-link video { cursor: pointer; }
+.video-link:hover video { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
+/* Media with a light and a dark variant (the Warp Explorer teaser). */
+.theme-dark-only { display: none !important; }
+html[data-theme="dark"] .theme-light-only { display: none !important; }
+html[data-theme="dark"] .theme-dark-only { display: block !important; }
