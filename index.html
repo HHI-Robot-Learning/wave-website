@@ -23,6 +23,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
           onload="renderMathInElement(document.body, {delimiters: [{left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}]});"></script>
   <script src="./static/js/data.js"></script>
+  <script src="./static/js/figure_notes.js"></script>
   <script defer src="./static/js/charts.js"></script>
   <script src="./static/js/index.js"></script>
   <script>
@@ -98,13 +99,14 @@
   </div>
 </section>
 
-<section class="hero teaser">
+<section class="hero teaser" id="overview">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <div class="html-figure" data-width="1600" data-height="700">
+      <div class="html-figure" data-width="1600" data-height="700" data-notes="overview">
         <iframe src="./static/figures/wave_architecture.html" width="1600" height="700" scrolling="no" loading="lazy"
                 title="Overview of WAVE: a selection policy picks one object, the frozen skill is shown only that object, and a warping policy edits every input and action channel of the skill."></iframe>
       </div>
+      <p class="figure-hint">Hover over (or tap) a component for details; some link to the related figure or section.</p>
       <h2 class="subtitle has-text-centered">
         <span class="wave">WAVE</span> reuses a frozen single-object skill for many objects: trained with at most nine cubes, it arranges up to thirty.
       </h2>
@@ -163,7 +165,7 @@
     <!-- Method. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Method</h2>
+        <h2 class="title is-3" id="method">Method</h2>
         <div class="content has-text-justified">
           <p>
             <span class="wave">WAVE</span> takes a skill \(\mu\) that can move a single object to its goal and uses it, without changing its weights, to arrange many objects. A selection policy picks one object \(x^*\) at a time, and \(\mu\) is shown a scene in which this object is the only one. The other objects are still there, so a warping policy \(\psi\) reads the neighborhood of the object and bends the inputs and actions of \(\mu\) where needed, for example to steer the robot around a stack or to let go of a cube on top of another:
@@ -181,18 +183,19 @@
           </p>
         </div>
 
-        <h3 class="title is-4">Warping Policy</h3>
+        <h3 class="title is-4" id="warping-policy">Warping Policy</h3>
         <div class="content has-text-justified">
-          <div class="html-figure" data-width="1126" data-height="586">
+          <div class="html-figure" data-width="1126" data-height="586" data-notes="warp">
             <iframe src="./static/figures/warp_architecture.html" width="1126" height="586" scrolling="no" loading="lazy"
                     title="Architecture of the warping policy."></iframe>
           </div>
+          <p class="figure-hint">Hover over (or tap) a component for details; some link to the related figure or section.</p>
           <p class="figure-caption">
             A per-pair network scores every neighbor and an elementwise minimum reduces the scores to one neighborhood encoding, independent of the count. A small transformer emits one categorical distribution per warp parameter over a fixed grid. Every distribution starts on the identity, so training starts from the unwarped skill.
           </p>
         </div>
 
-        <h3 class="title is-4">Bounded Completion Guarantee</h3>
+        <h3 class="title is-4" id="guarantee">Bounded Completion Guarantee</h3>
         <div class="content has-text-justified">
           <p>
             Whether <span class="wave">WAVE</span> completes a task of \(N\) objects within a number of skill invocations linear in \(N\) is decided by the net progress per attempt \(\rho = (1-\delta_{\mathrm{cov}})\,p_e - \lambda\). If \(\rho > 0\), then for every \(c > 1/\rho\)
@@ -208,7 +211,7 @@
     <!-- Count generalization. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Count Generalization</h2>
+        <h2 class="title is-3" id="results">Count Generalization</h2>
 
         <h3 class="title is-4">Gantry Robot</h3>
         <div class="content has-text-justified">
@@ -350,7 +353,7 @@
     <!-- Ablations. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Ablations</h2>
+        <h2 class="title is-3" id="ablations">Ablations</h2>
         <div class="content has-text-justified">
           <p>
             Warping only the input channels nearly matches the full warp, warping only the output channels collapses by ten cubes, and warps with only multipliers or only offsets fall in between. Random selection completes no episode with five or more cubes on stacking and the pyramid, while a fixed nearest-first rule matches the learned selection policy on stacking and the square and falls behind it on the pyramid.
