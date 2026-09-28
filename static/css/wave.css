@@ -150,7 +150,7 @@
 
 html[data-theme="dark"] { color-scheme: dark; }
 html[data-theme="dark"],
-html[data-theme="dark"] body { background: #16181c; color: #c9ccd1; }
+html[data-theme="dark"] body { background: #171717; color: #c9ccd1; }
 html[data-theme="dark"] .title,
 html[data-theme="dark"] .subtitle,
 html[data-theme="dark"] .content h2,
@@ -175,7 +175,7 @@ html[data-theme="dark"] .content img { background: #fff; border-radius: 6px; pad
 html[data-theme="dark"] .theme-toggle,
 html[data-theme="dark"] .chart-tabs .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
 html[data-theme="dark"] .chart-tabs .button.is-dark,
-html[data-theme="dark"] .publication-links .button.is-dark { background: #eceef1; color: #16181c; }
+html[data-theme="dark"] .publication-links .button.is-dark { background: #eceef1; color: #171717; }
 
 /* Table */
 html[data-theme="dark"] .table { background: transparent; color: #c9ccd1; }
@@ -193,10 +193,10 @@ html[data-theme="dark"] .line-chart .baseline { stroke: #4a4e55; }
 html[data-theme="dark"] .line-chart .train-band { fill: #1f2227; }
 html[data-theme="dark"] .line-chart .train-label { fill: #7d838b; }
 html[data-theme="dark"] .line-chart .series circle,
-html[data-theme="dark"] .line-chart .series rect { stroke: #16181c; }
+html[data-theme="dark"] .line-chart .series rect { stroke: #171717; }
 html[data-theme="dark"] .line-chart .series path.band { opacity: 0.18; }
 html[data-theme="dark"] .line-chart.in-view .draw path.band { opacity: 0.18; }
-html[data-theme="dark"] .chart-tooltip { background: #eceef1; color: #16181c; }
+html[data-theme="dark"] .chart-tooltip { background: #eceef1; color: #171717; }
 html[data-theme="dark"] .chart-tooltip .tt-range { color: #6b7078; }
 html[data-theme="dark"] .chart-legend { color: #c9ccd1; }
 /* The near-black series (EIT distilled, multipliers only) would vanish on the dark background. */
@@ -204,3 +204,38 @@ html[data-theme="dark"] .line-chart [stroke="#3a3a3a"] { stroke: #bfc3c9; }
 html[data-theme="dark"] .line-chart [fill="#3a3a3a"] { fill: #bfc3c9; }
 html[data-theme="dark"] .chart-legend .swatch[style*="#3a3a3a"],
 html[data-theme="dark"] .chart-tooltip .tt-swatch[style*="#3a3a3a"] { background: #bfc3c9 !important; }
+
+/* Figures embedded as standalone HTML pages (static/figures/). The iframe is laid out at the
+   figure's native size and scaled to the column width by index.js. */
+.html-figure {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+}
+.html-figure iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  transform-origin: 0 0;
+}
+html[data-theme="dark"] .html-figure { background: transparent; }
+/* Fallback when the frame's document is not reachable: invert the whole frame from outside. */
+html[data-theme="dark"] .html-figure.no-access iframe { filter: invert(0.91) hue-rotate(180deg); }
+
+/* PNG plots with rendered frames on top (necessity_episode.png): in dark mode invert the plot
+   like the HTML figures and lay an untouched copy over the frame strip (rows 100-339, columns
+   199-2366 of the 2375x1150 image), so the renders keep their real colors. */
+.dark-plot { position: relative; }
+.dark-plot img { display: block; width: 100%; }
+.dark-plot .dark-plot-keep { display: none; }
+html[data-theme="dark"] .content .dark-plot img { background: none; padding: 0; border-radius: 0; }
+html[data-theme="dark"] .dark-plot img:first-child { filter: invert(0.91) hue-rotate(180deg); }
+html[data-theme="dark"] .dark-plot .dark-plot-keep {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: inset(8.7% 0.3% 70.5% 8.35%);
+}

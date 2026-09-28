@@ -101,7 +101,10 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <img src="./static/images/architecture.png" alt="Overview of WAVE: a selection policy picks one object, the frozen skill is shown only that object, and a warping policy edits every input and action channel of the skill.">
+      <div class="html-figure" data-width="1600" data-height="700">
+        <iframe src="./static/figures/wave_architecture.html" width="1600" height="700" scrolling="no" loading="lazy"
+                title="Overview of WAVE: a selection policy picks one object, the frozen skill is shown only that object, and a warping policy edits every input and action channel of the skill."></iframe>
+      </div>
       <h2 class="subtitle has-text-centered">
         <span class="wave">WAVE</span> reuses a frozen single-object skill for many objects: trained with at most nine cubes, it arranges up to thirty.
       </h2>
@@ -174,7 +177,10 @@
 
         <h3 class="title is-4">Warping Policy</h3>
         <div class="content has-text-justified">
-          <img src="./static/images/warp_architecture.png" alt="Architecture of the warping policy.">
+          <div class="html-figure" data-width="1126" data-height="586">
+            <iframe src="./static/figures/warp_architecture.html" width="1126" height="586" scrolling="no" loading="lazy"
+                    title="Architecture of the warping policy."></iframe>
+          </div>
           <p class="figure-caption">
             A per-pair network scores every neighbor and an elementwise minimum reduces the scores to one neighborhood encoding, independent of the count. A small transformer emits one categorical distribution per warp parameter over a fixed grid. Every distribution starts on the identity, so training starts from the unwarped skill.
           </p>
@@ -361,7 +367,11 @@
           <p>
             We copy the simulator at every step of an episode and continue the copies with the input or the output warp switched off. Switching off the output warp delays mainly the release, since the frozen skill never releases a cube on its own. Switching off the input warp slows down every phase, by 0.95&ndash;1.56&nbsp;s, because it steers the skill throughout the episode.
           </p>
-          <img src="./static/images/necessity_episode.png" alt="Interventional estimate of when the input and output warps are needed across the phases of an episode.">
+          <!-- Two copies: in dark mode the first is inverted and the second, clipped to the rendered frames, keeps them untouched. -->
+          <div class="dark-plot">
+            <img src="./static/images/necessity_episode.png" alt="Interventional estimate of when the input and output warps are needed across the phases of an episode.">
+            <img src="./static/images/necessity_episode.png" alt="" aria-hidden="true" class="dark-plot-keep">
+          </div>
         </div>
       </div>
     </div>

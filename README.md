@@ -13,7 +13,8 @@ Skill Instead of Retraining It* (WAVE), built on the
 | `static/css/wave.css` | additions for the charts and the baselines table |
 | `static/js/charts.js` | interactive success-vs-count charts (hover, legend toggles, tabs) |
 | `static/js/data.js` | chart data, generated, do not edit |
-| `static/images/` | figures and snapshots copied from `../2026-ICLR-WAVE-NEW/figures` |
+| `static/figures/` | architecture diagrams as standalone HTML, embedded as scaled iframes |
+| `static/images/` | remaining paper figures copied from `../2026-ICLR-WAVE-NEW/figures` |
 | `static/videos/` | task clips (abstract, gantry and Panda sections), cropped from the wandb `MOGB/wave` training montages |
 | `scripts/fetch_videos.py` | re-downloads and re-encodes those clips (`../26-MOGB/.venv/bin/python scripts/fetch_videos.py`) |
 | `scripts/build_data.py` | regenerates `data.js` from the paper's `count_curve_data.csv` |
@@ -21,4 +22,4 @@ Skill Instead of Retraining It* (WAVE), built on the
 After the paper's results change:
 
     python3 scripts/build_data.py
-    cp ../2026-ICLR-WAVE-NEW/figures/{architecture,warp_architecture,necessity_episode}.png static/images/
+    cp ../2026-ICLR-WAVE-NEW/figures/necessity_episode.png static/images/
