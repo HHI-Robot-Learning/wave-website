@@ -48,7 +48,7 @@ window.FIGURE_NOTES = {
       rect: [318, 356, 212, 122],
       title: 'Selection policy',
       body: 'Scores every object that is not at its goal with a shared MLP: a bounded priority \\(f_i\\) and a learned feasibility \\(\\hat p_i\\). It picks \\(x^* = \\arg\\max_i\\, \\beta \\tanh f_i - \\alpha(\\tilde d_i + \\ell_i / \\hat p_i) + \\theta_i\\), starting from shortest path first, and decides again whenever a cube is placed or knocked off.',
-      link: { href: '#method', label: 'Read the method' },
+      link: { href: '#selection-policy', label: 'How it chooses and learns the order' },
     },
     {
       rect: [552, 368, 64, 254],

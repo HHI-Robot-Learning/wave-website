@@ -178,6 +178,24 @@
           </p>
         </div>
 
+        <h3 class="title is-4" id="selection-policy">Selection Policy</h3>
+        <div class="content has-text-justified">
+          <p>
+            The <span class="term-trained">selection policy</span> decides which object the frozen skill works on next. It scores every object that is not yet at its goal from the object's position relative to the gripper and to its goal, the robot state, and the object's neighborhood. A shared network maps these features to two numbers per object: a bounded priority \(f_i\) and a feasibility \(\hat p_i\), the probability that an attempt at the object succeeds. The selected object is the one with the highest score
+          </p>
+        </div>
+        <div class="content has-text-centered equation">
+          \[v_i = \beta \tanh f_i \;-\; \alpha \left( \tilde d_i + \frac{\ell_i}{\hat p_i} \right) \;+\; \theta_i, \qquad x^* = \arg\max_i \, v_i,\]
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            where \(\tilde d_i\) is the distance from the gripper to the object, \(\ell_i\) an estimate of the length of one attempt (the distance from the object to its goal plus a small constant), and \(\alpha\) a fixed price per unit of travel. Since \(1/\hat p_i\) is the expected number of attempts an object takes, the bracket is the expected travel that placing it costs. The holding bonus \(\theta_i\) is nonzero only for the current object, so the policy keeps it until it is placed, and it decides again whenever a cube is placed or a placed cube is knocked off its goal.
+          </p>
+          <p>
+            <strong class="key">The order in which the goals are filled is learned, not scripted.</strong> At initialization the priority is 0 and the feasibility 1, so the rule is simply <i>shortest gripper-to-object-to-goal path first</i>. Training with PPO on the task reward moves it away from that rule only where another order earns a higher return. The feasibility is trained on the realized outcomes of past attempts, so an object that cannot be placed yet, for example a cube whose slot in a tower rests on a cube that is not placed, gets a low feasibility and is postponed rather than removed from the candidates. Constraints such as building a tower from the bottom up or a pyramid layer by layer therefore emerge from experience. Because the priority is bounded by \(\beta\), it can reorder objects of similar expected travel but cannot overrule a difference in travel larger than \(2\beta/\alpha\).
+          </p>
+        </div>
+
         <h3 class="title is-4" id="warping-policy">Warping Policy</h3>
         <div class="content has-text-justified">
           <div class="html-figure" data-width="1126" data-height="586" data-notes="warp">
@@ -190,15 +208,6 @@
           </p>
         </div>
 
-        <h3 class="title is-4" id="guarantee">Bounded Completion Guarantee</h3>
-        <div class="content has-text-justified">
-          <p>
-            Whether <span class="wave">WAVE</span> completes a task of \(N\) objects within a number of skill invocations linear in \(N\) is decided by <strong class="key">the net progress per attempt</strong> \(\rho = (1-\delta_{\mathrm{cov}})\,p_e - \lambda\). If \(\rho > 0\), then for every \(c > 1/\rho\)
-          </p>
-        </div>
-        <div class="content has-text-centered equation">
-          \[\Pr\big[\text{task not complete within } cN \text{ attempts}\big] \le \exp\!\left(-\frac{2(\rho c - 1)^2 N}{c\,(1+\lambda_{\max})^2}\right)\]
-        </div>
       </div>
     </div>
     <!--/ Method. -->
