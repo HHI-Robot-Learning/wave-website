@@ -590,3 +590,27 @@ html[data-theme="dark"] .wv-nav .button:not(.is-dark) { background: #262a30; bor
 .theme-dark-only { display: none !important; }
 html[data-theme="dark"] .theme-light-only { display: none !important; }
 html[data-theme="dark"] .theme-dark-only { display: block !important; }
+
+/* 3-D view of the Warp Explorer (static/js/warp_view3d.js); the video is shown in "Video" mode. */
+.wv-viewbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.wv-viewbar .buttons, .wv-viewbar .button { margin-bottom: 0 !important; }
+.wv-mode { margin: 0 !important; }
+.wv-reset-btn { margin-left: auto; }
+.wv-3d { display: none; }
+.wv-3d canvas { display: block; width: 100%; border-radius: 8px; cursor: grab; touch-action: none; }
+.wv-3d canvas:active { cursor: grabbing; }
+.wv-video.is-3d .wv-3d { display: block; }
+.wv-video.is-3d video { display: none; }
+.wv-3d-legend { display: none; line-height: 1.8; }
+.wv-video.is-3d .wv-3d-legend { display: block; }
+.wv-3d-legend.is-off .wv-dot, .wv-3d-legend.is-off .wv-dash { opacity: 0.3; }
+.wv-hint { display: block; color: #9a9a9a; }
+.wv-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin: 0 0.3rem 0 0.7rem; vertical-align: -1px; }
+.wv-dot:first-child { margin-left: 0; }
+.wv-dot.is-goal { background: #d98324; }
+.wv-dot.is-obj { background: #4a6fa5; }
+.wv-dot.is-ee { background: #2f8f6b; }
+.wv-dash { display: inline-block; width: 16px; margin: 0 0.3rem 0 0.7rem; border-top: 2px dashed #b5453a; vertical-align: 3px; }
+html[data-theme="dark"] .wv-viewbar .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
+html[data-theme="dark"] .wv-viewbar .button.is-dark { background: #eceef1; color: #171717; }
+.wv-explain.wv-explain-wide { margin: 0.9rem 0 0; }

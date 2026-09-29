@@ -74,8 +74,45 @@
     // ── main: video + panels ──
     var main = h('div', 'wv-main', root);
     var vbox = h('div', 'wv-video', main);
+    // ── 3-D view (default) or the rendered video; the video stays the clock either way ──
+    var vbar = h('div', 'wv-viewbar', vbox);
+    var modeBtns = h('div', 'buttons has-addons wv-mode', vbar);
+    var b3d = h('button', 'button is-small is-dark', modeBtns, '3-D');
+    var bVid = h('button', 'button is-small', modeBtns, 'Video');
+    b3d.type = bVid.type = 'button';
+    var bOverlay = h('button', 'button is-small is-dark wv-overlay-btn', vbar, 'Warp overlay');
+    bOverlay.type = 'button';
+    var bReset = h('button', 'button is-small wv-reset-btn', vbar, 'Reset view');
+    bReset.type = 'button';
+    var box3d = h('div', 'wv-3d', vbox);
     var video = h('video', '', vbox);
     video.muted = true; video.playsInline = true; video.preload = 'auto';
+    var legend3d = h('p', 'wv-legend wv-3d-legend', vbox);
+    legend3d.innerHTML = '<span class="wv-dot is-goal"></span>presented goal <span class="wv-dot is-obj"></span>presented object ' +
+      '<span class="wv-dot is-ee"></span>presented jaws <span class="wv-dash"></span>warp (true \u2192 presented) ' +
+      '<span class="wv-hint">Drag to rotate, scroll to zoom, right-drag to pan.</span>';
+
+    var view = null, mode = '3d', overlayOn = true;
+    try {
+      if (window.THREE && window.WarpView3D && THREE.OrbitControls) view = WarpView3D(box3d, D);
+    } catch (e) { view = null; }
+    function setMode(m) {
+      mode = view ? m : 'video';
+      vbox.classList.toggle('is-3d', mode === '3d');
+      b3d.classList.toggle('is-dark', mode === '3d');
+      bVid.classList.toggle('is-dark', mode === 'video');
+      if (mode === '3d' && view) view.resize();
+    }
+    if (!view) vbar.style.display = 'none';
+    b3d.addEventListener('click', function () { setMode('3d'); });
+    bVid.addEventListener('click', function () { setMode('video'); });
+    bOverlay.addEventListener('click', function () {
+      overlayOn = !overlayOn;
+      bOverlay.classList.toggle('is-dark', overlayOn);
+      if (view) view.setOverlay(overlayOn);
+      legend3d.classList.toggle('is-off', !overlayOn);
+    });
+    bReset.addEventListener('click', function () { if (view) view.resetView(); });
     video.setAttribute('playsinline', '');
 
     var side = h('div', 'wv-side', main);
@@ -96,7 +133,7 @@
     }
     var inRows = shareBlock('Input warp', 'what the frozen skill sees \u00b7 KL, bits', D.inputs, 'is-input');
     var outRows = shareBlock('Output warp', 'what the robot is told to do \u00b7 KL, bits', D.outputs, 'is-output');
-    h('p', 'wv-explain', side,
+    h('p', 'wv-explain wv-explain-wide', root,  // full width under both columns, so they stay balanced
       'Each value is the Kullback\u2013Leibler divergence KL(\u03b4 \u2016 \u03c0) = \u2212log\u2082 \u03c0(unchanged) between the ' +
       'point mass \u03b4 on leaving a warp parameter unchanged (multiplier 1, offset 0, or holding an unchanged value) ' +
       'and the warping policy\u2019s categorical distribution \u03c0 over that parameter\u2019s values at this decision, ' +
@@ -171,6 +208,7 @@
     }
 
     function render() {
+      if (view && !playing) view.setTime(k, 0);
       var f = frames[k];
       var placed = f[0], cube = f[1] + 1;
       readout.innerHTML = 'Decision <b>' + (k + 1) + '</b> / ' + frames.length +
@@ -214,6 +252,7 @@
       epButtons.forEach(function (b, j) { b.classList.toggle('is-dark', j === i); b.classList.toggle('is-selected', j === i); });
       scrub.max = frames.length - 1;
       k = 0;
+      if (view) view.setEpisode(i, function () { view.setTime(k, 0); });
       video.src = D.episodes[i].video;
       // Loading a new source resets playbackRate to defaultPlaybackRate, so set both.
       video.defaultPlaybackRate = video.playbackRate = SPEEDS[+speed.value];
@@ -225,8 +264,10 @@
     // The video is the clock while playing; at the end of an episode, move on to the next.
     function tick() {
       if (playing && video.readyState >= 2) {
-        var i = Math.min(frames.length - 1, Math.floor(video.currentTime * D.fps));
+        var ft = video.currentTime * D.fps;
+        var i = Math.min(frames.length - 1, Math.floor(ft));
         if (i !== k) { k = i; render(); }
+        if (view) view.setTime(k, ft - i);
       }
       requestAnimationFrame(tick);
     }
@@ -265,6 +306,7 @@
     });
     svg.addEventListener('pointerup', function () { svg.onpointermove = null; });
 
+    setMode('3d');
     loadEpisode(0, false);
     setPlaying(false);
     requestAnimationFrame(tick);
