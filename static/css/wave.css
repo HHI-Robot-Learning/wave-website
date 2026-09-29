@@ -582,35 +582,6 @@ html[data-theme="dark"] .wv-tl-grid { stroke: #33373d; }
 html[data-theme="dark"] .wv-speed-val { color: #c9ccd1; }
 html[data-theme="dark"] .wv-explain { color: #8a9099; }
 html[data-theme="dark"] .wv-nav .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
-
-/* Scene panel (true vs presented, with the candidate cloud); colors as in the full explorer. */
-.warp-viewer {
-  --sc-true: #8a8f98; --sc-goal: #d98324; --sc-obj: #4a6fa5; --sc-ee: #2f8f6b;
-  --sc-warp: #b5453a; --sc-sat: #2f8f6b; --sc-field: #ffffff; --sc-rule: #dde2e8;
-  --sc-muted: #727a85; --sc-ink2: #464e58;
-}
-html[data-theme="dark"] .warp-viewer {
-  --sc-true: #6d7681; --sc-goal: #e8a463; --sc-obj: #7ba4dc; --sc-ee: #5fc79c;
-  --sc-warp: #e0776b; --sc-sat: #5fc79c; --sc-field: #10141a; --sc-rule: #232932;
-  --sc-muted: #7d8794; --sc-ink2: #aeb7c2;
-}
-.wv-scene { margin-top: 0.9rem; }
-.wv-scene-canvas { display: block; width: 100%; border-radius: 6px; }
-.wv-scene-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-top: 0.6rem; }
-.wv-toggles { margin: 0 !important; }
-.wv-toggles .button { margin-bottom: 0 !important; }
-.wv-scene-legend { line-height: 1.8; }
-.wv-scene-legend + .wv-explain { margin-top: 0.3rem; }
-.wv-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin: 0 0.3rem 0 0.7rem; vertical-align: -1px; }
-.wv-dot:first-child { margin-left: 0; }
-.wv-dot.is-true { border: 1.5px solid var(--sc-true); }
-.wv-dot.is-goal { background: var(--sc-goal); }
-.wv-dot.is-obj { background: var(--sc-obj); }
-.wv-dot.is-ee { background: var(--sc-ee); }
-.wv-dot.is-sat { background: var(--sc-sat); opacity: 0.45; border: 1.5px solid var(--sc-true); }
-.wv-dash { display: inline-block; width: 16px; margin: 0 0.3rem 0 0.7rem; border-top: 2px dashed var(--sc-warp); vertical-align: 3px; }
-html[data-theme="dark"] .wv-toggles .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
-html[data-theme="dark"] .wv-toggles .button.is-dark { background: #eceef1; color: #171717; }
 /* A video tile that links to a section (the Warp Explorer teaser in the abstract row). */
 .video-link { display: block; }
 .video-link video { cursor: pointer; }

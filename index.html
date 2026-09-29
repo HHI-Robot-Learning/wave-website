@@ -165,7 +165,7 @@
               </video>
               <p class="figure-caption has-text-centered"><a class="vc-title" href="#real-world">Real Franka Panda: a policy fine-tuned for five-cube towers building a five-high tower (5&times; real time)</a></p>
             </div>
-            <div class="vc-cell" style="--ar: 1.339">
+            <div class="vc-cell" style="--ar: 1.888">
               <a href="#warp-explorer" class="video-link" aria-label="Go to the Warp Explorer">
                 <video class="theme-light-only" autoplay muted loop playsinline preload="metadata">
                   <source src="./static/videos/warp_explorer_teaser.mp4" type="video/mp4">
@@ -419,12 +419,12 @@
         <h2 class="title is-3" id="warp-explorer">Warp Explorer</h2>
         <div class="content has-text-justified">
           <p>
-            What does the warp actually do during an episode? Below is one recorded episode at a time of the gantry cube-stacking (\(h=6\)) policy with seven cubes. The bars show how much of each quantity the <span class="term-trained">warping policy</span> is changing at the current decision: on the <span class="term-warp">input side</span>, what the <span class="term-frozen">frozen skill</span> is shown; on the <span class="term-warp">output side</span>, what the robot is told to do. The action panel compares the skill's own action with the one actually executed.
+            What does the warp actually do during an episode? Below is one recorded episode at a time of the gantry cube-stacking (\(h=6\)) policy with seven cubes. The bars show how far the <span class="term-trained">warping policy</span> moves away from leaving each quantity unchanged at the current decision, as a KL divergence in bits: on the <span class="term-warp">input side</span>, what the <span class="term-frozen">frozen skill</span> is shown; on the <span class="term-warp">output side</span>, what the robot is told to do. The action panel compares the skill's own action with the one actually executed.
           </p>
         </div>
         <div class="warp-viewer" id="warp-viewer"></div>
         <p class="figure-caption">
-          8 recorded episodes, all successful, from 32 parallel worlds that all succeeded (3,419 decisions). A share of 0% means the skill sees or does that quantity unchanged. Data from the Warp Explorer recording of run <code>paper_gantry_towers_h6_n13_ft_from_n7_seed42</code>.
+          8 recorded episodes, all successful, from 32 parallel worlds that all succeeded (3,419 decisions). A value of 0 bits means the policy is certain to pass that quantity through unchanged. Data from the Warp Explorer recording of run <code>paper_gantry_towers_h6_n13_ft_from_n7_seed42</code>.
         </p>
       </div>
     </div>
