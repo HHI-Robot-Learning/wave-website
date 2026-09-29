@@ -223,44 +223,45 @@
             Six cube arrangement tasks, each trained on one to between six and nine cubes and evaluated zero-shot on one to thirty. Trained on one to seven cubes, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the stacking (\(h=3\)) episodes at twenty cubes and <strong class="key">0.48</strong> at thirty, and <strong class="key">0.90</strong> of the line episodes at thirty. It stays above the 0.75 that Li et al. report at six objects up to <strong class="key">23 cubes</strong> on stacking and up to <strong class="key">30</strong> on the line.
           </p>
         </div>
-        <div class="video-grid is-3">
+        <div class="video-grid is-3 is-uniform" style="--grid-ar: 1.436">
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/gantry_stacking_h3.mp4" type="video/mp4">
+              <source src="./static/videos/sim/gantry_stacking_h3.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Stacking (h=3)</p>
+            <p class="figure-caption has-text-centered">Stacking (h=3), 15 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/gantry_stacking_h6.mp4" type="video/mp4">
+              <source src="./static/videos/sim/gantry_stacking_h6.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Stacking (h=6)</p>
+            <p class="figure-caption has-text-centered">Stacking (h=6), 15 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/gantry_pyramid.mp4" type="video/mp4">
+              <source src="./static/videos/sim/gantry_pyramid.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Pyramid</p>
+            <p class="figure-caption has-text-centered">Pyramid, 15 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/gantry_wall.mp4" type="video/mp4">
+              <source src="./static/videos/sim/gantry_wall.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Wall</p>
+            <p class="figure-caption has-text-centered">Wall, 15 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/gantry_square.mp4" type="video/mp4">
+              <source src="./static/videos/sim/gantry_square.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Square</p>
+            <p class="figure-caption has-text-centered">Square, 15 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/gantry_line.mp4" type="video/mp4">
+              <source src="./static/videos/sim/gantry_line.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Line</p>
+            <p class="figure-caption has-text-centered">Line, 15 cubes</p>
           </div>
         </div>
+        <p class="figure-caption has-text-centered">One successful episode per task with 15 cubes, beyond every task’s training range of six to nine cubes, in real time from the initial scene until every cube is placed. Goal markers are hidden.</p>
         <div class="line-chart" data-chart="gantry"></div>
         <p class="figure-caption">
           Whole-task success against the number of cubes \(N\). Colored: <span class="wave">WAVE</span> per task, mean over three seeds with the range shaded. Gray: published methods on their own tasks. Dashed red: the frozen skill alone. Hover for values, click a legend entry to hide it.
@@ -272,38 +273,39 @@
             The same method and reward, with a parallel-jaw gripper for stacking, pyramid and wall, and a sphere-tip pusher for the line and square. With the pusher, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the line episodes at nine cubes, <strong class="key">0.78</strong> at fifteen and <strong class="key">0.62</strong> at twenty. With the gripper, success already falls within the training range, mainly because the large body of the arm knocks neighbors off their goals.
           </p>
         </div>
-        <div class="video-grid is-3">
+        <div class="video-grid is-3 is-uniform" style="--grid-ar: 1.5">
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/panda_stacking_h3.mp4" type="video/mp4">
+              <source src="./static/videos/sim/panda_stacking_h3.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Gripper, stacking (h=3)</p>
+            <p class="figure-caption has-text-centered">Gripper, stacking (h=3), 10 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/panda_pyramid.mp4" type="video/mp4">
+              <source src="./static/videos/sim/panda_pyramid.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Gripper, pyramid</p>
+            <p class="figure-caption has-text-centered">Gripper, pyramid, 10 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/panda_wall.mp4" type="video/mp4">
+              <source src="./static/videos/sim/panda_wall.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Gripper, wall</p>
+            <p class="figure-caption has-text-centered">Gripper, wall, 9 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/panda_push_line.mp4" type="video/mp4">
+              <source src="./static/videos/sim/panda_push_line.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Pusher, line</p>
+            <p class="figure-caption has-text-centered">Pusher, line, 10 cubes</p>
           </div>
           <div class="video-cell">
             <video autoplay controls muted loop playsinline preload="metadata">
-              <source src="./static/videos/panda_push_square.mp4" type="video/mp4">
+              <source src="./static/videos/sim/panda_push_square.mp4" type="video/mp4">
             </video>
-            <p class="figure-caption has-text-centered">Pusher, square</p>
+            <p class="figure-caption has-text-centered">Pusher, square, 10 cubes</p>
           </div>
         </div>
+        <p class="figure-caption has-text-centered">One successful episode per task, in real time from the initial scene until every cube is placed. Goal markers are hidden.</p>
         <div class="line-chart" data-chart="panda"></div>
         <p class="figure-caption">
           Whole-task success on the Panda arm for every evaluated count (gripper tasks to 15, pusher line to 20, pusher square to 30).

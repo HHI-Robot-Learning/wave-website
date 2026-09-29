@@ -560,3 +560,7 @@ html[data-theme="dark"] .wv-nav .button:not(.is-dark) { background: #262a30; bor
 html[data-theme="dark"] .wv-viewbar .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
 html[data-theme="dark"] .wv-viewbar .button.is-dark { background: #eceef1; color: #171717; }
 .wv-explain.wv-explain-wide { margin: 0.9rem 0 0; }
+
+/* Task video grids: one frame format per grid (--grid-ar); a video of another shape is fitted in
+   without cropping, so every row keeps the same height. */
+.video-grid.is-uniform video { aspect-ratio: var(--grid-ar); object-fit: contain; background: #6b7a8c; }
