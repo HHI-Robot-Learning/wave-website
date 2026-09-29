@@ -248,52 +248,6 @@ html[data-theme="dark"] .dark-plot .dark-plot-keep {
   background: #000;
 }
 
-/* Abstract videos: a horizontally sliding row. Every clip has the same height and a width set by
-   its aspect ratio (--ar); the row scrolls and snaps clip by clip, with arrows on the sides. */
-.video-carousel { position: relative; margin: 1.25rem 0 1.5rem; --vc-h: 250px; }
-.vc-track {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  padding: 0 0 0.25rem;
-}
-.vc-track::-webkit-scrollbar { display: none; }
-.vc-cell { flex: 0 0 calc(var(--vc-h) * var(--ar)); scroll-snap-align: start; }
-.vc-cell video { display: block; width: 100%; height: var(--vc-h); object-fit: cover; border-radius: 10px; }
-.vc-cell .figure-caption { margin-top: 0.35rem; }
-.vc-title { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; text-decoration-color: #b5b5b5; }
-.vc-title:hover { color: var(--c-trained); text-decoration: underline; }
-.vc-arrow {
-  position: absolute;
-  top: calc(var(--vc-h) / 2);
-  z-index: 3;
-  display: flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px;
-  border: 1px solid #e3e3e3; border-radius: 50%;
-  background: #fff; color: #4a4a4a;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  transform: translateY(-50%);
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-.vc-prev { left: -14px; }
-.vc-next { right: -14px; }
-.vc-arrow:hover { color: var(--c-trained); }
-.vc-arrow[disabled] { opacity: 0; pointer-events: none; }
-html[data-theme="dark"] .vc-arrow { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
-html[data-theme="dark"] .vc-title:hover { color: var(--c-trained); }
-@media screen and (min-width: 769px) {
-  .column.is-four-fifths > .video-carousel { width: 125%; margin-left: -12.5%; }
-}
-@media screen and (max-width: 768px) {
-  .video-carousel { --vc-h: 200px; }
-  .vc-prev { left: 4px; }
-  .vc-next { right: 4px; }
-}
-
 /* Affiliation logos under the author list, each with its affiliation number. */
 .affiliation-logos {
   display: flex;
@@ -582,14 +536,6 @@ html[data-theme="dark"] .wv-tl-grid { stroke: #33373d; }
 html[data-theme="dark"] .wv-speed-val { color: #c9ccd1; }
 html[data-theme="dark"] .wv-explain { color: #8a9099; }
 html[data-theme="dark"] .wv-nav .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
-/* A video tile that links to a section (the Warp Explorer teaser in the abstract row). */
-.video-link { display: block; }
-.video-link video { cursor: pointer; }
-.video-link:hover video { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
-/* Media with a light and a dark variant (the Warp Explorer teaser). */
-.theme-dark-only { display: none !important; }
-html[data-theme="dark"] .theme-light-only { display: none !important; }
-html[data-theme="dark"] .theme-dark-only { display: block !important; }
 
 /* 3-D view of the Warp Explorer (static/js/warp_view3d.js); the video is shown in "Video" mode. */
 .wv-viewbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }

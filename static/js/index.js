@@ -217,27 +217,3 @@ document.addEventListener('DOMContentLoaded', function () {
   }, { passive: true });
   spy();
 });
-
-// Abstract video carousel: the arrows scroll by one clip and hide at either end of the row.
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.video-carousel').forEach(function (car) {
-    var track = car.querySelector('.vc-track');
-    var prev = car.querySelector('.vc-prev'), next = car.querySelector('.vc-next');
-    function step(dir) {
-      var cells = Array.prototype.slice.call(track.children);
-      var x = track.scrollLeft, target = null;
-      if (dir > 0) target = cells.find(function (c) { return c.offsetLeft > x + 2; });
-      else target = cells.slice().reverse().find(function (c) { return c.offsetLeft < x - 2; });
-      track.scrollTo({ left: target ? target.offsetLeft : (dir > 0 ? track.scrollWidth : 0) });
-    }
-    function update() {
-      prev.disabled = track.scrollLeft <= 2;
-      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
-    }
-    prev.addEventListener('click', function () { step(-1); });
-    next.addEventListener('click', function () { step(1); });
-    track.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    update();
-  });
-});

@@ -28,7 +28,6 @@ VIDEOS = {
     "gantry_square": ("7wzr253v", GANTRY),  # paper_gantry_square_n9_seed1
     "gantry_line": ("2of9ppjv", "372:279:214:398"),  # paper_gantry_line_n6_seed1, wider arena
     "panda_stacking_h3": ("03mfzuez", PANDA),  # paper_panda_towers_h3_n7_seed1
-    "panda_stacking_h3_abstract": ("03mfzuez", PANDA, 7),  # same run, first 7 s, shown under the abstract
     "panda_pyramid": ("s5qmyt61", PANDA),  # paper_panda_pyramid_n6_seed42
     "panda_wall": ("l3mwzdg8", PANDA),  # paper_panda_wall_n8_seed1
     "panda_push_line": ("myb1466s", PUSHER),  # paper_panda_push_line_n9_seed100
