@@ -25,7 +25,7 @@
     if (!D) return;
     var nIn = D.inputs.length, nOut = D.outputs.length, nAct = D.actions.length;
     var SH = 3, ACT = 3 + nIn + nOut;  // frame layout, see build_warp_data.py
-    var BAR_MAX = D.kl_max;  // bits at a full warp bar: the recording's maximum, -log2(1e-6) = 19.9
+    var BAR_MAX = 5;  // bits at a full warp bar; a larger value fills the bar and gets an overflow mark
     var ep = 0, k = 0, playing = false, userPaused = false, frames = D.episodes[0].frames;
 
     // Share of all input (output) channels edited at a decision, weighted by channel count.
@@ -131,15 +131,27 @@
         return { fill: fill, val: val };
       });
     }
+    // Scale under a block of bars: 0 at the start of the track, BAR_MAX at its end.
+    function barScale(box) {
+      var row = h('div', 'wv-share wv-scale', box);
+      h('span', 'wv-share-label', row, '');
+      var t = h('span', 'wv-scale-track', row);
+      h('span', 'wv-scale-min', t, '0');
+      h('span', 'wv-scale-max', t, BAR_MAX + ' bits');
+      h('span', 'wv-share-val', row, '');
+    }
     var inRows = shareBlock('Input warp', 'what the frozen skill sees \u00b7 KL, bits', D.inputs, 'is-input');
+    barScale(side.lastChild);
     var outRows = shareBlock('Output warp', 'what the robot is told to do \u00b7 KL, bits', D.outputs, 'is-output');
+    barScale(side.lastChild);
     h('p', 'wv-explain wv-explain-wide', root,  // full width under both columns, so they stay balanced
       'Each value is the Kullback\u2013Leibler divergence KL(\u03b4 \u2016 \u03c0) = \u2212log\u2082 \u03c0(unchanged) between the ' +
       'point mass \u03b4 on leaving a warp parameter unchanged (multiplier 1, offset 0, or holding an unchanged value) ' +
       'and the warping policy\u2019s categorical distribution \u03c0 over that parameter\u2019s values at this decision, ' +
       'averaged over the quantity\u2019s parameters (one multiplier and one offset per coordinate) and given in bits. ' +
-      'A value of 0 means the policy leaves the quantity unchanged with probability 1. The bars span 0 to ' +
-      (BAR_MAX).toFixed(1) + ' bits (\u2212log\u2082 10\u207b\u2076), the largest value the recording represents, since it stores ' +
+      'A value of 0 means the policy leaves the quantity unchanged with probability 1. The bars span 0 to ' + BAR_MAX +
+      ' bits; a larger value fills the bar and is marked with \u25b8 at its end. The divergence itself is unbounded; the ' +
+      'recording caps it at ' + D.kl_max.toFixed(1) + ' bits per parameter (\u2212log\u2082 10\u207b\u2076), since it stores ' +
       'probabilities with a floor of 10\u207b\u2076.');
 
     var actBox = h('div', 'wv-block', side);
@@ -190,12 +202,12 @@
       var vout = smooth(frames.map(function (f) { return sideShare(f, nIn, nIn + nOut); }));
       yMax = Math.max(50, Math.ceil(Math.max.apply(null, vin.concat(vout)) / 50) * 50);
       axisLabel.textContent = (yMax / 100).toFixed(1) + ' bits';
-      var dIn = 'M0,' + y(0), dOut = '';
+      var dIn = '', dOut = '';
       frames.forEach(function (f, i) {
-        dIn += ' L' + x(i).toFixed(1) + ',' + y(vin[i]).toFixed(1);
+        dIn += (i ? ' L' : 'M') + x(i).toFixed(1) + ',' + y(vin[i]).toFixed(1);
         dOut += (i ? ' L' : 'M') + x(i).toFixed(1) + ',' + y(vout[i]).toFixed(1);
       });
-      areaIn.setAttribute('d', dIn + ' L' + W + ',' + y(0) + ' Z');
+      areaIn.setAttribute('d', dIn);
       lineOut.setAttribute('d', dOut);
       marks.innerHTML = '';
       for (var i = 1; i < frames.length; i++) {
@@ -216,8 +228,9 @@
         (placed < D.n_obj ? ' &nbsp;·&nbsp; working on cube <b>' + cube + '</b>' + (f[2] ? ', carrying it' : '') : ' &nbsp;·&nbsp; <b>done</b>');
       inRows.concat(outRows).forEach(function (r, i) {
         var v = f[SH + i];
-        // bars span 0 to BAR_MAX bits
+        // bars span 0 to BAR_MAX bits (v is bits x100); beyond that the bar is full and marked
         r.fill.style.width = Math.min(100, v / BAR_MAX) + '%';
+        r.fill.classList.toggle('is-over', v > 100 * BAR_MAX);
         r.val.textContent = (v / 100).toFixed(2);
       });
       actRows.forEach(function (r, i) {

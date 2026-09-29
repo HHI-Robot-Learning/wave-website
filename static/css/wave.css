@@ -500,7 +500,7 @@ html[data-theme="dark"] .warp-viewer { border-color: #33373d; --wv-output: #ffb2
 
 .wv-timeline { margin-top: 1rem; }
 .wv-tl-svg { display: block; width: 100%; height: 90px; cursor: pointer; touch-action: none; }
-.wv-tl-in { fill: var(--c-warp); fill-opacity: 0.25; stroke: var(--c-warp); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.wv-tl-in { fill: none; stroke: var(--c-warp); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .wv-tl-out { fill: none; stroke: var(--wv-output); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .wv-tl-mark { stroke: #9aa0a6; stroke-dasharray: 2 3; vector-effect: non-scaling-stroke; }
 .wv-tl-mark-label { font-size: 11px; fill: #7a7a7a; text-anchor: middle; }
@@ -564,3 +564,17 @@ html[data-theme="dark"] .wv-viewbar .button.is-dark { background: #eceef1; color
 /* Task video grids: one frame format per grid (--grid-ar); a video of another shape is fitted in
    without cropping, so every row keeps the same height. */
 .video-grid.is-uniform video { aspect-ratio: var(--grid-ar); object-fit: contain; background: #6b7a8c; }
+
+/* Warp bars: 0..5 bit scale under each block; a value above the scale fills the bar and is marked. */
+.wv-scale { line-height: 1.2; margin-top: 0.1rem; }
+.wv-scale-track { position: relative; height: 1em; font-size: 0.72rem; color: #9a9a9a; }
+.wv-scale-min { position: absolute; left: 0; }
+.wv-scale-max { position: absolute; right: 0; }
+.wv-share-track { overflow: visible; }
+.wv-share-fill.is-over { border-radius: 5px 0 0 5px; }
+.wv-share-fill.is-over::after {
+  content: "\25b8"; position: absolute; right: -0.75em; top: 50%; transform: translateY(-50%);
+  font-size: 0.8rem; line-height: 1; color: #363636;
+}
+html[data-theme="dark"] .wv-share-fill.is-over::after { color: #eceef1; }
+html[data-theme="dark"] .wv-scale-track { color: #7d838b; }
