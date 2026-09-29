@@ -1,6 +1,7 @@
 // Warp Explorer section: a compact viewer over window.WARP_DATA (static/js/warp_data.js, built by
-// scripts/build_warp_data.py). The episode video is the clock (one video frame per decision); the
-// bars, the action panel and the timeline all follow the decision on screen.
+// scripts/build_warp_data.py). A task is picked first; its data (static/js/warp_tasks/<task>.js)
+// loads on demand. The episode video is the clock (one video frame per decision); the 3-D view,
+// the bars, the action panel and the timeline all follow the decision on screen.
 (function () {
   'use strict';
 
@@ -20,32 +21,66 @@
     return el;
   }
 
+  // Per-task data files, loaded once each.
+  var LOADED = {}, WAITING = {};
+  window.WARP_TASK_LOADED = function (key, data) {
+    LOADED[key] = data;
+    (WAITING[key] || []).forEach(function (cb) { cb(data); });
+    WAITING[key] = [];
+  };
+  function loadTask(T, cb) {
+    if (LOADED[T.key]) { cb(LOADED[T.key]); return; }
+    if (!WAITING[T.key]) {
+      WAITING[T.key] = [];
+      var tag = document.createElement('script');
+      tag.src = T.file;
+      document.head.appendChild(tag);
+    }
+    WAITING[T.key].push(cb);
+  }
+
   function init(root) {
     var D = window.WARP_DATA;
-    if (!D) return;
-    var nIn = D.inputs.length, nOut = D.outputs.length, nAct = D.actions.length;
-    var SH = 3, ACT = 3 + nIn + nOut;  // frame layout, see build_warp_data.py
+    if (!D || !D.tasks || !D.tasks.length) return;
+    var nIn = D.inputs.length, nOut = D.outputs.length;
+    var SH = 3;  // frame layout, see build_warp_data.py
     var BAR_MAX = 5;  // bits at a full warp bar; a larger value fills the bar and gets an overflow mark
-    var ep = 0, k = 0, playing = false, userPaused = false, frames = D.episodes[0].frames;
+    var T = null, TD = null, ti = -1, ep = 0, k = 0, playing = false, userPaused = false, frames = [];
+    var nAct = 0, ACT = SH + nIn + nOut;
 
-    // Share of all input (output) channels edited at a decision, weighted by channel count.
+    // Mean KL over all input (output) parameters at a decision, weighted by parameter count.
     function sideShare(f, from, to) {
       var num = 0, den = 0;
-      for (var i = from; i < to; i++) { num += f[SH + i] * D.channels[i]; den += D.channels[i]; }
+      for (var i = from; i < to; i++) {
+        if (f[SH + i] < 0) continue;
+        num += f[SH + i] * T.channels[i]; den += T.channels[i];
+      }
       return den ? num / den : 0;
     }
+
+    // ── task selector: one row of tasks per embodiment ──
+    var sel = h('div', 'wv-tasks', root);
+    var taskButtons = [];
+    var groups = [];
+    D.tasks.forEach(function (t) { if (groups.indexOf(t.group) < 0) groups.push(t.group); });
+    groups.forEach(function (g) {
+      var row = h('div', 'wv-task-row', sel);
+      h('span', 'wv-label wv-task-group', row, g);
+      var btns = h('div', 'buttons has-addons', row);
+      D.tasks.forEach(function (t, i) {
+        if (t.group !== g) return;
+        var b = h('button', 'button is-small', btns, t.label);
+        b.type = 'button';
+        b.title = t.n_obj + ' cubes';
+        b.addEventListener('click', function () { userPaused = false; selectTask(i, true); });
+        taskButtons[i] = b;
+      });
+    });
 
     // ── controls ──
     var bar = h('div', 'wv-controls', root);
     var eps = h('div', 'buttons has-addons wv-episodes', bar);
-    h('span', 'wv-label', eps, 'Episode');
-    var epButtons = D.episodes.map(function (e, i) {
-      var b = h('button', 'button is-small', eps, String(i + 1));
-      b.type = 'button';
-      b.title = e.frames.length + ' decisions';
-      b.addEventListener('click', function () { userPaused = false; loadEpisode(i, true); });
-      return b;
-    });
+    var epButtons = [];
     var nav = h('div', 'buttons has-addons wv-nav', bar);
     function navButton(icon, label) {
       var b = h('button', 'button is-small', nav);
@@ -68,13 +103,12 @@
     var speed = h('input', '', speedBox);
     speed.type = 'range'; speed.min = 0; speed.max = SPEEDS.length - 1; speed.step = 1; speed.value = 0;  // 0.25x by default
     speed.setAttribute('aria-label', 'Playback speed');
-    var speedVal = h('span', 'wv-speed-val', speedBox, SPEEDS[0] + '\u00d7');
+    var speedVal = h('span', 'wv-speed-val', speedBox, SPEEDS[0] + '×');
     var readout = h('p', 'wv-readout', root);
 
-    // ── main: video + panels ──
+    // ── main: 3-D view (default) or the rendered video; the video stays the clock either way ──
     var main = h('div', 'wv-main', root);
     var vbox = h('div', 'wv-video', main);
-    // ── 3-D view (default) or the rendered video; the video stays the clock either way ──
     var vbar = h('div', 'wv-viewbar', vbox);
     var modeBtns = h('div', 'buttons has-addons wv-mode', vbar);
     var b3d = h('button', 'button is-small is-dark', modeBtns, '3-D');
@@ -87,14 +121,12 @@
     var box3d = h('div', 'wv-3d', vbox);
     var video = h('video', '', vbox);
     video.muted = true; video.playsInline = true; video.preload = 'auto';
+    video.setAttribute('playsinline', '');
     var legend3d = h('p', 'wv-legend wv-3d-legend', vbox);
-    legend3d.innerHTML = '<span class="wv-dot is-goal"></span>presented goal <span class="wv-dot is-obj"></span>presented object ' +
-      '<span class="wv-dot is-ee"></span>presented jaws <span class="wv-dash"></span>warp (true \u2192 presented) ' +
-      '<span class="wv-hint">Drag to rotate, scroll to zoom, right-drag to pan.</span>';
 
     var view = null, mode = '3d', overlayOn = true;
     try {
-      if (window.THREE && window.WarpView3D && THREE.OrbitControls) view = WarpView3D(box3d, D);
+      if (window.THREE && window.WarpView3D && THREE.OrbitControls) view = WarpView3D(box3d);
     } catch (e) { view = null; }
     function setMode(m) {
       mode = view ? m : 'video';
@@ -113,7 +145,6 @@
       legend3d.classList.toggle('is-off', !overlayOn);
     });
     bReset.addEventListener('click', function () { if (view) view.resetView(); });
-    video.setAttribute('playsinline', '');
 
     var side = h('div', 'wv-side', main);
     function shareBlock(title, sub, labels, cls) {
@@ -122,13 +153,11 @@
       h('span', 'wv-block-sub', t, sub);
       return labels.map(function (label) {
         var row = h('div', 'wv-share', box);
-        var n = D.channels[D.inputs.concat(D.outputs).indexOf(label)];
-        row.title = label + ': ' + n + ' warp parameters (a multiplier and an offset per coordinate); the bar is their mean KL from \u201cno edit\u201d, in bits';
         h('span', 'wv-share-label', row, label);
         var track = h('span', 'wv-share-track', row);
         var fill = h('span', 'wv-share-fill', track);
         var val = h('span', 'wv-share-val', row);
-        return { fill: fill, val: val };
+        return { row: row, label: label, fill: fill, val: val };
       });
     }
     // Scale under a block of bars: 0 at the start of the track, BAR_MAX at its end.
@@ -140,41 +169,37 @@
       h('span', 'wv-scale-max', t, BAR_MAX + ' bits');
       h('span', 'wv-share-val', row, '');
     }
-    var inRows = shareBlock('Input warp', 'what the frozen skill sees \u00b7 KL, bits', D.inputs, 'is-input');
+    var inRows = shareBlock('Input warp', 'what the frozen skill sees · KL, bits', D.inputs, 'is-input');
     barScale(side.lastChild);
-    var outRows = shareBlock('Output warp', 'what the robot is told to do \u00b7 KL, bits', D.outputs, 'is-output');
+    var outRows = shareBlock('Output warp', 'what the robot is told to do · KL, bits', D.outputs, 'is-output');
     barScale(side.lastChild);
+    var shareRows = inRows.concat(outRows);
     h('p', 'wv-explain wv-explain-wide', root,  // full width under both columns, so they stay balanced
-      'Each value is the Kullback\u2013Leibler divergence KL(\u03b4 \u2016 \u03c0) = \u2212log\u2082 \u03c0(unchanged) between the ' +
-      'point mass \u03b4 on leaving a warp parameter unchanged (multiplier 1, offset 0, or holding an unchanged value) ' +
-      'and the warping policy\u2019s categorical distribution \u03c0 over that parameter\u2019s values at this decision, ' +
-      'averaged over the quantity\u2019s parameters (one multiplier and one offset per coordinate) and given in bits. ' +
+      'Each value is the Kullback–Leibler divergence KL(δ ‖ π) = −log₂ π(unchanged) between the ' +
+      'point mass δ on leaving a warp parameter unchanged (multiplier 1, offset 0, or holding an unchanged value) ' +
+      'and the warping policy’s categorical distribution π over that parameter’s values at this decision, ' +
+      'averaged over the quantity’s parameters (one multiplier and one offset per coordinate) and given in bits. ' +
       'A value of 0 means the policy leaves the quantity unchanged with probability 1. The bars span 0 to ' + BAR_MAX +
-      ' bits; a larger value fills the bar and is marked with \u25b8 at its end. The divergence itself is unbounded; the ' +
-      'recording caps it at ' + D.kl_max.toFixed(1) + ' bits per parameter (\u2212log\u2082 10\u207b\u2076), since it stores ' +
-      'probabilities with a floor of 10\u207b\u2076.');
+      ' bits; a larger value fills the bar and is marked with ▸ at its end. The divergence itself is unbounded; the ' +
+      'recording caps it at ' + D.kl_max.toFixed(1) + ' bits per parameter (−log₂ 10⁻⁶), since it stores ' +
+      'probabilities with a floor of 10⁻⁶.');
 
     var actBox = h('div', 'wv-block', side);
     var at = h('p', 'wv-block-title', actBox, 'Action ');
     h('span', 'wv-block-sub', at, 'the skill alone vs. after the warp');
-    var actRows = D.actions.map(function (name) {
-      var row = h('div', 'wv-act', actBox);
-      h('span', 'wv-share-label', row, name);
-      var track = h('span', 'wv-act-track', row);
-      h('span', 'wv-act-zero', track);
-      return { skill: h('span', 'wv-act-bar is-skill', track), warped: h('span', 'wv-act-bar is-warped', track) };
-    });
+    var actList = h('div', '', actBox);
+    var actRows = [];
     var legend = h('p', 'wv-legend', actBox);
     legend.innerHTML = '<span class="wv-swatch is-skill"></span>skill alone <span class="wv-swatch is-warped"></span>executed (after the output warp)';
 
     // ── timeline ──
     var tl = h('div', 'wv-timeline', root);
     var tlTitle = h('p', 'wv-block-title', tl, 'Warp activity over the episode ');
-    h('span', 'wv-block-sub', tlTitle, 'KL from \u201cno edit\u201d, averaged over all input and all output warp parameters and over 9 decisions; numbers mark cubes placed. Click to jump.');
+    h('span', 'wv-block-sub', tlTitle, 'KL from “no edit”, averaged over all input and all output warp parameters and over 9 decisions; numbers mark each new count of cubes placed. Click to jump.');
     var svg = s('svg', { class: 'wv-tl-svg', preserveAspectRatio: 'none' }, tl);
     var W = 1000, H = 90, PAD = 14;
     svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    var areaIn = s('path', { class: 'wv-tl-in' }, svg);
+    var lineIn = s('path', { class: 'wv-tl-in' }, svg);
     var lineOut = s('path', { class: 'wv-tl-out' }, svg);
     var marks = s('g', { class: 'wv-tl-marks' }, svg);
     var head = s('line', { class: 'wv-tl-head', y1: 0, y2: H }, svg);
@@ -187,7 +212,7 @@
     var yMax = 100;  // set per episode to its largest smoothed value (bits x100), rounded up to 0.5 bits
     function y(v) { return H - 4 - (v / yMax) * (H - PAD - 4); }
 
-    // Centered moving average over SMOOTH decisions: the per-decision share flickers, the trend reads.
+    // Centered moving average over SMOOTH decisions: the per-decision value flickers, the trend reads.
     var SMOOTH = 9;
     function smooth(v) {
       var r = SMOOTH >> 1;
@@ -207,11 +232,13 @@
         dIn += (i ? ' L' : 'M') + x(i).toFixed(1) + ',' + y(vin[i]).toFixed(1);
         dOut += (i ? ' L' : 'M') + x(i).toFixed(1) + ',' + y(vout[i]).toFixed(1);
       });
-      areaIn.setAttribute('d', dIn);
+      lineIn.setAttribute('d', dIn);
       lineOut.setAttribute('d', dOut);
       marks.innerHTML = '';
-      for (var i = 1; i < frames.length; i++) {
-        if (frames[i][0] > frames[i - 1][0]) {
+      // mark each new highest count of placed cubes (a knocked-off cube placed again is not re-marked)
+      for (var i = 1, best = frames[0][0]; i < frames.length; i++) {
+        if (frames[i][0] > best) {
+          best = frames[i][0];
           s('line', { x1: x(i), x2: x(i), y1: PAD - 2, y2: H, class: 'wv-tl-mark' }, marks);
           var t = s('text', { x: x(i), y: PAD - 4, class: 'wv-tl-mark-label' }, marks);
           t.textContent = frames[i][0];
@@ -220,14 +247,16 @@
     }
 
     function render() {
+      if (!frames.length) return;
       if (view && !playing) view.setTime(k, 0);
       var f = frames[k];
       var placed = f[0], cube = f[1] + 1;
       readout.innerHTML = 'Decision <b>' + (k + 1) + '</b> / ' + frames.length +
-        ' &nbsp;·&nbsp; <b>' + placed + '</b> of ' + D.n_obj + ' cubes placed' +
-        (placed < D.n_obj ? ' &nbsp;·&nbsp; working on cube <b>' + cube + '</b>' + (f[2] ? ', carrying it' : '') : ' &nbsp;·&nbsp; <b>done</b>');
-      inRows.concat(outRows).forEach(function (r, i) {
+        ' &nbsp;·&nbsp; <b>' + placed + '</b> of ' + T.n_obj + ' cubes placed' +
+        (placed < T.n_obj ? ' &nbsp;·&nbsp; working on cube <b>' + cube + '</b>' + (f[2] ? ', carrying it' : '') : ' &nbsp;·&nbsp; <b>done</b>');
+      shareRows.forEach(function (r, i) {
         var v = f[SH + i];
+        if (v < 0) return;  // the task has no such channels (row hidden)
         // bars span 0 to BAR_MAX bits (v is bits x100); beyond that the bar is full and marked
         r.fill.style.width = Math.min(100, v / BAR_MAX) + '%';
         r.fill.classList.toggle('is-over', v > 100 * BAR_MAX);
@@ -249,24 +278,25 @@
     }
 
     function setPlaying(p) {
-      playing = p;
-      play.innerHTML = p ? '<span class="icon"><i class="fas fa-pause"></i></span><span>Pause</span>'
-                         : '<span class="icon"><i class="fas fa-play"></i></span><span>Play</span>';
-      if (p) video.play().catch(function () {}); else video.pause();
+      playing = p && !!frames.length;
+      play.innerHTML = playing ? '<span class="icon"><i class="fas fa-pause"></i></span><span>Pause</span>'
+                               : '<span class="icon"><i class="fas fa-play"></i></span><span>Play</span>';
+      if (playing) video.play().catch(function () {}); else video.pause();
     }
     function seek(i) {
+      if (!frames.length) return;
       k = Math.max(0, Math.min(frames.length - 1, i));
-      if (video.readyState >= 1) video.currentTime = (k + 0.5) / D.fps;
+      if (video.readyState >= 1) video.currentTime = (k + 0.5) / T.fps;
       render();
     }
     function loadEpisode(i, autoplay) {
       ep = i;
-      frames = D.episodes[i].frames;
+      frames = TD.episodes[i].frames;
       epButtons.forEach(function (b, j) { b.classList.toggle('is-dark', j === i); b.classList.toggle('is-selected', j === i); });
       scrub.max = frames.length - 1;
       k = 0;
-      if (view) view.setEpisode(i, function () { view.setTime(k, 0); });
-      video.src = D.episodes[i].video;
+      if (view) view.setEpisode(TD.episodes[i].pose);
+      video.src = TD.episodes[i].video;
       // Loading a new source resets playbackRate to defaultPlaybackRate, so set both.
       video.defaultPlaybackRate = video.playbackRate = SPEEDS[+speed.value];
       drawTimeline();
@@ -274,10 +304,57 @@
       if (autoplay) setPlaying(true);
     }
 
+    // Rebuild everything that depends on the task: episodes, actions, hidden rows, 3-D scene.
+    function selectTask(i, autoplay) {
+      ti = i;
+      T = D.tasks[i];
+      taskButtons.forEach(function (b, j) { if (b) { b.classList.toggle('is-dark', j === i); b.classList.toggle('is-selected', j === i); } });
+      setPlaying(false);
+      frames = []; TD = null;
+      readout.textContent = 'Loading ' + T.group.toLowerCase() + ', ' + T.label.toLowerCase() + '…';
+
+      eps.innerHTML = '';
+      h('span', 'wv-label', eps, 'Episode');
+      epButtons = T.episodes.map(function (e, j) {
+        var b = h('button', 'button is-small', eps, String(j + 1) + (e.success ? '' : ' ✗'));
+        b.type = 'button';
+        b.title = e.decisions + ' decisions, ' + (e.success ? 'every cube placed' : 'not every cube placed');
+        b.addEventListener('click', function () { if (TD) { userPaused = false; loadEpisode(j, true); } });
+        return b;
+      });
+
+      nAct = T.actions.length;
+      ACT = SH + nIn + nOut;
+      actList.innerHTML = '';
+      actRows = T.actions.map(function (name) {
+        var row = h('div', 'wv-act', actList);
+        h('span', 'wv-share-label', row, name);
+        var track = h('span', 'wv-act-track', row);
+        h('span', 'wv-act-zero', track);
+        return { skill: h('span', 'wv-act-bar is-skill', track), warped: h('span', 'wv-act-bar is-warped', track) };
+      });
+      shareRows.forEach(function (r, j) {
+        var n = T.channels[j];
+        r.row.style.display = n ? '' : 'none';
+        r.row.title = r.label + ': ' + n + ' warp parameters (a multiplier and an offset per coordinate); the bar is their mean KL from “no edit”, in bits';
+      });
+      legend3d.innerHTML = '<span class="wv-dot is-goal"></span>presented goal <span class="wv-dot is-obj"></span>presented object ' +
+        (T.ee_point ? '<span class="wv-dot is-ee"></span>presented jaws ' : '') +
+        '<span class="wv-dash"></span>warp (true → presented) ' +
+        '<span class="wv-hint">Drag to rotate, scroll to zoom, right-drag to pan.</span>';
+
+      loadTask(T, function (data) {
+        if (ti !== i) return;  // another task was picked meanwhile
+        TD = data;
+        if (view) view.setTask(T, function () { if (TD && ti === i) view.setTime(k, 0); });
+        loadEpisode(0, autoplay);
+      });
+    }
+
     // The video is the clock while playing; at the end of an episode, move on to the next.
     function tick() {
-      if (playing && video.readyState >= 2) {
-        var ft = video.currentTime * D.fps;
+      if (playing && video.readyState >= 2 && frames.length) {
+        var ft = video.currentTime * T.fps;
         var i = Math.min(frames.length - 1, Math.floor(ft));
         if (i !== k) { k = i; render(); }
         if (view) view.setTime(k, ft - i);
@@ -285,7 +362,7 @@
       requestAnimationFrame(tick);
     }
     video.addEventListener('ended', function () {
-      if (playing) loadEpisode((ep + 1) % D.episodes.length, true);
+      if (playing && TD) loadEpisode((ep + 1) % TD.episodes.length, true);
     });
 
     play.addEventListener('click', function () { userPaused = playing; setPlaying(!playing); });
@@ -295,7 +372,7 @@
     speed.addEventListener('input', function () {
       var r = SPEEDS[+speed.value];
       video.defaultPlaybackRate = video.playbackRate = r;
-      speedVal.textContent = r + '\u00d7';
+      speedVal.textContent = r + '×';
     });
     // Arrow keys step one decision, space plays and pauses, while the viewer has focus.
     root.tabIndex = 0;
@@ -320,8 +397,7 @@
     svg.addEventListener('pointerup', function () { svg.onpointermove = null; });
 
     setMode('3d');
-    loadEpisode(0, false);
-    setPlaying(false);
+    selectTask(0, false);
     requestAnimationFrame(tick);
 
     // Play while the section is on screen and pause when it leaves, unless the visitor paused

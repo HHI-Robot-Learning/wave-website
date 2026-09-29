@@ -1,38 +1,50 @@
-"""Build the data for the page's Warp Explorer section from a Warp Explorer recording.
+"""Build the data of the page's Warp Explorer section from the Warp Explorer recordings.
 
-    python3 scripts/build_warp_data.py [path/to/runs/<run>/n<count>]
+    python3 scripts/build_warp_data.py [recordings dir]
 
-Defaults to ../26-MOGB-Warp-Explorer/runs/h6n13_seed42/n7. Writes static/js/warp_data.js and
-copies the episode videos to static/videos/warp/. The recording's data.js holds everything the
-full explorer draws (33 MB); this keeps only what the page shows, per decision:
+The recordings dir (default ../warp_recordings) holds one render per task, as written by the
+Warp Explorer's recorder (render_warp_3d.py): <dir>/web_<task>_n<cubes>/warp3d.json + ep*.mp4.
+Outputs:
+  static/js/warp_data.js            index: tasks, labels, channel counts, bar and 3-D settings
+  static/js/warp_tasks/<task>.js    per task, loaded when the task is opened: per decision
+                                    progress, KL per quantity, skill vs executed action, 3-D pose
+  static/videos/warp/<task>/ep*.mp4 the recorded episode videos
 
-  * progress: cubes placed, the cube being worked on, whether one is carried,
-  * for every physical quantity the warp edits, how far the policy moved away from "no edit": the
-    KL divergence KL(no edit || policy) = -log2 pi(no edit) per parameter, averaged over the
-    quantity's parameters, in bits x100; split into the input side (what the frozen skill sees)
-    and the output side (what the robot is told to do),
-  * the skill's own action and the executed action (after the output warp), per actuator,
-and, one file per episode in static/js/warp_3d/, the poses for the 3-D view (see PRESENTED).
+Per decision and quantity, the warp bars show how far the policy moved away from "no edit": the
+KL divergence KL(no edit || policy) = -log2 pi(no edit) per warp parameter, averaged over the
+quantity's parameters, in bits (stored x100). pi(identity) = exp(-authority_nats); the hold bin
+repeats the previous value, so it also counts as "no edit" when that value is the identity.
+The 3-D view gets the robot joints and every cube's pose (the recording's qpos), the goals, and
+the presented goal / object / jaws: anchor + (1 + slope) * (true - anchor) + offset per axis,
+anchored on the selected cube (the full explorer's formula).
 """
 import json
 import math
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "26-MOGB-Warp-Explorer/runs/h6n13_seed42/n7"
-OUT_JS = ROOT / "static/js/warp_data.js"
+SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "warp_recordings"
+OUT_INDEX = ROOT / "static/js/warp_data.js"
+OUT_TASKS = ROOT / "static/js/warp_tasks"
 OUT_VID = ROOT / "static/videos/warp"
-OUT_3D = ROOT / "static/js/warp_3d"
 
-# The 3-D view needs, per decision, the robot's joints, every cube's pose, the goals and the presented
-# (warped) goal / object / jaws. The recording's qpos is [8 robot joints, then per cube x y z qw qx qy
-# qz]; the presented points use the full explorer's formula
-#   anchor + (1 + slope) * (true - anchor) + offset   per axis, anchored on the selected cube,
-# with the x, y, z channels of these groups (offset group, slope group):
-PRESENTED = {"goal": ("goal", "goal_slope"), "obj": ("obj", "obj_slope"), "jaw": ("ee", "ee_slope")}
-N_ROBOT = 8
+# task key, label, embodiment group, robot / scene of the 3-D view, recording directory
+TASKS = [
+    ("gantry_stacking_h3", "Stacking (h=3)", "Gantry", "gantry", "gantry_wide", "web_gantry_stacking_h3_n15"),
+    ("gantry_stacking_h6", "Stacking (h=6)", "Gantry", "gantry", "gantry_wide", "web_gantry_stacking_h6_n15"),
+    ("gantry_pyramid", "Pyramid", "Gantry", "gantry", "gantry_wide", "web_gantry_pyramid_n15"),
+    ("gantry_wall", "Wall", "Gantry", "gantry", "gantry_wide", "web_gantry_wall_n15"),
+    ("gantry_square", "Square", "Gantry", "gantry", "gantry_wide", "web_gantry_square_n15"),
+    ("gantry_line", "Line", "Gantry", "gantry", "gantry_wide30", "web_gantry_line_n15"),
+    ("panda_stacking_h3", "Stacking (h=3)", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_stacking_h3_n7"),
+    ("panda_pyramid", "Pyramid", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_pyramid_n6"),
+    ("panda_wall", "Wall", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_wall_n8"),
+    ("panda_push_line", "Line", "Panda pusher", "panda_pusher", "panda_push", "web_panda_push_line_n10"),
+    ("panda_push_square", "Square", "Panda pusher", "panda_pusher", "panda_push", "web_panda_push_square_n10"),
+]
 
 # Physical quantities, built from the recording's channel groups (meta.group_specs).
 INPUT = [
@@ -46,13 +58,40 @@ OUTPUT = [
     ("Arm motion", ["act_gain", "act_t"]),
     ("Gripper", ["grip_gain", "grip"]),
 ]
+PRESENTED = {"goal": ("goal", "goal_slope"), "obj": ("obj", "obj_slope"), "jaw": ("ee", "ee_slope")}
 
 
-def main():
-    text = (SRC / "data.js").read_text()
-    rec = json.loads(text[text.index("WARP_EXPLORER_RUN(") + len("WARP_EXPLORER_RUN("):text.rindex(")")])
+def r3(v, nd=3):
+    return [round(x, nd) for x in v]
+
+
+def video_fps(path):
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                          "stream=r_frame_rate", "-of", "csv=p=0", str(path)],
+                         capture_output=True, text=True, check=True).stdout.strip()
+    a, b = out.split("/")
+    return float(a) / float(b)
+
+
+def action_names(meta, rec_dir):
+    """The recorder names actions after the gantry's axes; on the Panda arm they are the seven joint
+    commands (plus the grip on the gripper), so they are relabeled there."""
+    names = meta["action_names"]
+    if "panda" in rec_dir.name:
+        names = [f"joint {i + 1}" for i in range(7)] + (["jaw grip"] if len(names) > 7 else [])
+    return names
+
+
+def load_recording(d):
+    text = (d / "warp3d.json").read_text()
+    if text.lstrip().startswith("WARP_EXPLORER_RUN("):
+        text = text[text.index("(") + 1:text.rindex(")")]
+    return json.loads(text)
+
+
+def build_task(key, rec_dir):
+    rec = load_recording(rec_dir)
     meta = rec["meta"]
-
     offsets, o = {}, 0
     for name, n in meta["group_specs"]:
         offsets[name] = (o, n)
@@ -62,93 +101,101 @@ def main():
     def columns(groups):
         cols = []
         for g in groups:
-            if g in disabled:
-                continue
-            start, n = offsets[g]
-            cols.extend(range(start, start + n))
+            if g in offsets and g not in disabled:
+                start, n = offsets[g]
+                cols.extend(range(start, start + n))
         return cols
 
-    quantities = [(label, columns(groups)) for label, groups in INPUT + OUTPUT]
-
-    if OUT_3D.exists():
-        shutil.rmtree(OUT_3D)
-    OUT_3D.mkdir(parents=True)
-    n_obj, eez = meta["n_obj"], meta["ee_z_offset"]
-
-    def r3(v):
-        return [round(x, 3) for x in v]
+    quantities = [columns(groups) for _, groups in INPUT + OUTPUT]
+    n_obj, eez = meta["n_obj"], meta.get("ee_z_offset", 0.0)
+    ee_point = meta.get("ee_is_point", True) is not False
+    p_floor = math.exp(-meta.get("authority_nats_ceiling", -math.log(1e-6)))
 
     def presented(f):
         A, G = f["obj"][f["atom"]], f["goal"][f["atom"]]
-        jaw = [f["ee"][0], f["ee"][1], f["ee"][2] - eez]
-        true = {"goal": G, "obj": A, "jaw": jaw}
+        true = {"goal": G, "obj": A, "jaw": [f["ee"][0], f["ee"][1], f["ee"][2] - eez]}
         out = []
-        for key, (off_g, slope_g) in PRESENTED.items():
-            o, sl = offsets[off_g][0], offsets[slope_g][0]
-            out += [A[d] + (1 + f["w"][sl + d]) * (true[key][d] - A[d]) + f["w"][o + d] for d in range(3)]
+        for key_, (off_g, slope_g) in PRESENTED.items():
+            if key_ == "jaw" and not ee_point:
+                continue
+            o_, s_ = offsets[off_g][0], offsets[slope_g][0]
+            out += [A[d] + (1 + f["w"][s_ + d]) * (true[key_][d] - A[d]) + f["w"][o_ + d] for d in range(3)]
         return r3(out)
 
-    episodes = []
-    OUT_VID.mkdir(parents=True, exist_ok=True)
+    vid_dir = OUT_VID / key
+    if vid_dir.exists():
+        shutil.rmtree(vid_dir)
+    vid_dir.mkdir(parents=True)
+    episodes, n_robot, fps = [], None, None
     for i, ep in enumerate(rec["episodes"]):
-        frames = []
+        frames, poses = [], []
         prev_w = [0.0] * meta["p_dim"]  # before the first decision every channel is at the identity
         for f in ep["frames"]:
-            w = f["w"]
-            # How far the policy moved away from "no edit", per quantity: for every parameter the KL
-            # divergence KL(no edit || policy) = -log2 pi(no edit), averaged over the quantity's
-            # parameters, in bits (stored x100). pi(identity) = exp(-authority_nats); the hold bin
-            # repeats the previous value, so it also counts as "no edit" when that value is the
-            # identity. The recorder floors probabilities at 1e-6, so a parameter is at most 19.9 bits.
             def kl(c):
                 p_stay = math.exp(-f["authority_nats"][c])
                 if abs(prev_w[c]) < 1e-9:
                     p_stay += f["p_hold"][c]
-                return -math.log2(min(1.0, max(p_stay, 1e-6)))
-            shares = [round(100 * sum(kl(c) for c in cols) / len(cols)) for _, cols in quantities]
-            prev_w = w
+                return -math.log2(min(1.0, max(p_stay, p_floor)))
+            shares = [round(100 * sum(kl(c) for c in cols) / len(cols)) if cols else -1 for cols in quantities]
             frames.append([sum(1 for s in f["sat"] if s), f["atom"], 1 if f["carried"] else 0] + shares
                           + [round(v, 2) for v in f["act_naive"]] + [round(v, 2) for v in f["act"]])
-        # 3-D view data, one lazily loaded file per episode
-        pose = []
-        for f in ep["frames"]:
+            prev_w = f["w"]
             q = f["qpos"]
-            assert len(q) == N_ROBOT + 7 * n_obj, "unexpected qpos layout"
-            for j in range(n_obj):
-                assert max(abs(q[N_ROBOT + 7 * j + d] - f["obj"][j][d]) for d in range(3)) < 1e-3, "qpos cube != obj"
-            pose.append({"q": r3(q), "g": [r3(g) for g in f["goal"]], "s": [1 if x else 0 for x in f["sat"]],
-                         "p": presented(f)})
-        (OUT_3D / f"ep{i}.js").write_text(
-            f"window.WARP_3D_LOADED({i}," + json.dumps(pose, separators=(",", ":")) + ");\n")
-        video = f"ep{i}.mp4"
-        shutil.copy2(SRC / ep["video"], OUT_VID / video)
-        episodes.append({"success": ep["success"], "video": f"static/videos/warp/{video}", "frames": frames})
+            n_robot = len(q) - 7 * n_obj
+            poses.append({"q": r3(q), "g": [r3(g) for g in f["goal"]], "s": [1 if x else 0 for x in f["sat"]],
+                          "a": f["atom"], "p": presented(f)})
+        src_video = rec_dir / (ep.get("video") or f"ep{i}.mp4")
+        shutil.copy2(src_video, vid_dir / f"ep{i}.mp4")
+        fps = fps or video_fps(src_video)
+        episodes.append({"success": bool(ep["success"]), "video": f"static/videos/warp/{key}/ep{i}.mp4",
+                         "frames": frames, "pose": poses})
+    (OUT_TASKS / f"{key}.js").write_text(
+        "// Generated by scripts/build_warp_data.py. Do not edit.\n"
+        f"window.WARP_TASK_LOADED({json.dumps(key)}," + json.dumps({"episodes": episodes}, separators=(",", ":")) + ");\n")
+    info = {
+        "n_obj": n_obj,
+        "fps": round(fps, 4),
+        "channels": [len(c) for c in quantities],
+        "actions": action_names(meta, rec_dir),
+        "n_robot": n_robot,
+        "cube_half": meta["cube_half_extent"],
+        "ee_point": ee_point,
+        "episodes": [{"success": e["success"], "decisions": len(e["frames"])} for e in episodes],
+        "harvest": meta.get("harvest_yield"),
+        "kl_max": meta.get("authority_nats_ceiling", -math.log(1e-6)) / math.log(2),
+    }
+    n = sum(len(e["frames"]) for e in episodes)
+    size = (OUT_TASKS / f"{key}.js").stat().st_size / 1e6
+    print(f"{key:20s} {len(episodes)} episodes, {n:5d} decisions, {n_obj:2d} cubes, "
+          f"{sum(e['success'] for e in episodes)} successful, {size:.1f} MB")
+    return info
 
-    data = {
-        "run": rec["label"],
-        "n_obj": meta["n_obj"],
-        "fps": 10,  # one video frame per decision (render_every_decisions = 1) at 10 fps
+
+def main():
+    if OUT_TASKS.exists():
+        shutil.rmtree(OUT_TASKS)
+    OUT_TASKS.mkdir(parents=True)
+    tasks, kl_max = [], None
+    for key, label, group, robot, scene, rec in TASKS:
+        rec_dir = SRC / rec
+        if not (rec_dir / "warp3d.json").exists():
+            print(f"{key:20s} missing {rec_dir}/warp3d.json, skipped")
+            continue
+        info = build_task(key, rec_dir)
+        kl_max = info.pop("kl_max")
+        tasks.append(dict(key=key, label=label, group=group, robot=robot, scene=scene,
+                          file=f"static/js/warp_tasks/{key}.js", **info))
+    index = {
+        "kl_max": kl_max,
         "inputs": [label for label, _ in INPUT],
         "outputs": [label for label, _ in OUTPUT],
-        "channels": [len(cols) for _, cols in quantities],
-        "actions": meta["action_names"],
-        "view3d": {
-            "files": [f"static/js/warp_3d/ep{i}.js" for i in range(len(rec["episodes"]))],
-            "n_robot": N_ROBOT,
-            "cube_half": meta["cube_half_extent"],
-        },
-        # upper end of the KL bars: the largest per-parameter KL the recording can represent,
-        # -log2(1e-6) bits (its ceiling is stored in nats), since it floors probabilities at 1e-6
-        "kl_max": meta["authority_nats_ceiling"] / math.log(2),
-        # frame = [placed, atom, carried, *KL per quantity in bits x100 (inputs + outputs),
-        #          *skill action, *executed action]
-        "episodes": episodes,
+        # frame = [placed, atom, carried, *KL per quantity in bits x100 (-1: the task has no such
+        #          channels), *skill action, *executed action]
+        "tasks": tasks,
     }
-    OUT_JS.write_text("// Generated by scripts/build_warp_data.py from a Warp Explorer recording. Do not edit.\n"
-                      "window.WARP_DATA = " + json.dumps(data, separators=(",", ":")) + ";\n")
-    n = sum(len(e["frames"]) for e in episodes)
-    print(f"wrote {OUT_JS.relative_to(ROOT)} ({OUT_JS.stat().st_size / 1e3:.0f} KB): "
-          f"{len(episodes)} episodes, {n} decisions; videos in {OUT_VID.relative_to(ROOT)}")
+    OUT_INDEX.write_text("// Generated by scripts/build_warp_data.py from Warp Explorer recordings. Do not edit.\n"
+                         "window.WARP_DATA = " + json.dumps(index, separators=(",", ":")) + ";\n")
+    print(f"wrote {OUT_INDEX.relative_to(ROOT)} with {len(tasks)} tasks")
 
 
 if __name__ == "__main__":

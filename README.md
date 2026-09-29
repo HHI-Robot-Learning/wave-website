@@ -17,8 +17,10 @@ Skill Instead of Retraining It* (WAVE), built on the
 | `static/js/figure_notes.js` | hover notes and links on those diagrams; hotspot rectangles are in figure pixels and must be re-measured if a diagram's layout changes |
 | `static/images/` | remaining paper figures copied from `../2026-ICLR-WAVE-NEW/figures` |
 | `static/videos/` | task clips (abstract, gantry and Panda sections), cropped from the wandb `MOGB/wave` training montages |
-| `static/js/warp_viewer.js`, `warp_data.js`, `static/videos/warp/` | the Warp Explorer section; data and episode videos come from a Warp Explorer recording via `python3 scripts/build_warp_data.py [runs/<run>/n<count>]` |
 | `static/videos/sim/`, `static/videos/real_*` | task and real-robot videos, encoded from `~/Downloads/wave_videos_submission` by `python3 scripts/encode_videos.py [source dir]` |
+| `static/js/warp_viewer.js`, `warp_view3d.js` | the Warp Explorer section: task selector, player, warp bars, 3-D view (three.js) |
+| `static/js/warp_data.js`, `static/js/warp_tasks/`, `static/videos/warp/` | its data, one file and three episode videos per task, built by `python3 scripts/build_warp_data.py [recordings dir]` from the renders in `../warp_recordings/` (made on the VCA cluster with the Warp Explorer's `render_warp_3d.py`, 3 episodes per task) |
+| `static/js/panda_meshes.js` | Panda link meshes for the 3-D view, built by `scripts/build_panda_meshes.py` from `rai-robotModels` |
 | `scripts/build_data.py` | regenerates `data.js` from the paper's `count_curve_data.csv` |
 
 After the paper's results change:

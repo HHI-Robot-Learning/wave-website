@@ -521,7 +521,7 @@ html[data-theme="dark"] .wv-episodes .button.is-dark, html[data-theme="dark"] .w
 }
 .wv-timeline { position: relative; }
 .wv-tl-grid { stroke: #e3e3e3; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
-.wv-tl-axis { position: absolute; right: 0; font-size: 0.72rem; color: #9a9a9a; margin-top: -92px; }
+.wv-tl-axis { position: absolute; left: 0; font-size: 0.72rem; color: #9a9a9a; margin-top: -92px; background: inherit; padding-right: 4px; }
 html[data-theme="dark"] .wv-tl-grid { stroke: #33373d; }
 
 /* Step navigator, speed slider and the explanation of the warp percentages. */
@@ -578,3 +578,13 @@ html[data-theme="dark"] .wv-viewbar .button.is-dark { background: #eceef1; color
 }
 html[data-theme="dark"] .wv-share-fill.is-over::after { color: #eceef1; }
 html[data-theme="dark"] .wv-scale-track { color: #7d838b; }
+
+/* Warp Explorer task selector: one row of tasks per embodiment. */
+.wv-tasks { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.8rem; padding-bottom: 0.8rem; border-bottom: 1px solid #ececec; }
+.wv-task-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.wv-task-row .buttons { margin: 0 !important; }
+.wv-task-row .button { margin-bottom: 0 !important; }
+.wv-task-group { min-width: 7.5rem; }
+html[data-theme="dark"] .wv-tasks { border-bottom-color: #2a2d33; }
+html[data-theme="dark"] .wv-task-row .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
+html[data-theme="dark"] .wv-task-row .button.is-dark { background: #eceef1; color: #171717; }

@@ -419,12 +419,12 @@
         <h2 class="title is-3" id="warp-explorer">Warp Explorer</h2>
         <div class="content has-text-justified">
           <p>
-            What does the warp actually do during an episode? Below is one recorded episode at a time of the gantry cube-stacking (\(h=6\)) policy with seven cubes. The bars show how far the <span class="term-trained">warping policy</span> moves away from leaving each quantity unchanged at the current decision, as a KL divergence in bits: on the <span class="term-warp">input side</span>, what the <span class="term-frozen">frozen skill</span> is shown; on the <span class="term-warp">output side</span>, what the robot is told to do. The action panel compares the skill's own action with the one actually executed.
+            What does the warp actually do during an episode? Pick a task and one of its recorded episodes: every task of the paper, on the gantry and on the Panda arm with its gripper or its pusher. The bars show how far the <span class="term-trained">warping policy</span> moves away from leaving each quantity unchanged at the current decision, as a KL divergence in bits: on the <span class="term-warp">input side</span>, what the <span class="term-frozen">frozen skill</span> is shown; on the <span class="term-warp">output side</span>, what the robot is told to do. The action panel compares the skill's own action with the one actually executed.
           </p>
         </div>
         <div class="warp-viewer" id="warp-viewer"></div>
         <p class="figure-caption">
-          8 recorded episodes, all successful, from 32 parallel worlds that all succeeded (3,419 decisions). A value of 0 bits means the policy is certain to pass that quantity through unchanged. Data from the Warp Explorer recording of run <code>paper_gantry_towers_h6_n13_ft_from_n7_seed42</code>.
+          Three episodes per task, drawn at random from 32 parallel worlds that each ran one episode with the paper's policy (&#10007; marks an episode that did not place every cube). Gantry tasks run with 15 cubes, the Panda gripper tasks with their largest training count (7, 6 and 8 cubes), and the pusher tasks with 10 cubes. A value of 0 bits means the policy is certain to pass that quantity through unchanged.
         </p>
       </div>
     </div>
