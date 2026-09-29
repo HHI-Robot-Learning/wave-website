@@ -380,13 +380,34 @@
         <h3 class="title is-4" id="necessity">When Is Each Side of the Warp Needed?</h3>
         <div class="content has-text-justified">
           <p>
-            We copy the simulator at every step of an episode and continue the copies with the input or the output warp switched off. Switching off the <span class="term-warp">output warp</span> delays mainly <strong class="key">the release</strong>, since the frozen skill never releases a cube on its own. Switching off the <span class="term-warp">input warp</span> slows down <strong class="key">every phase</strong>, by 0.95&ndash;1.56&nbsp;s, because it steers the skill throughout the episode.
+            We split each episode into the phases approach, grasp, carry, release and depart, read from the simulator state. At every step we copy the simulator and continue the copies with one of four changes, six copies for each: the full warp, only \(W_{\mathrm{in}}\) or only \(W_{\mathrm{out}}\) is held at the identity, or the full warp pauses for 0.5&nbsp;s.
+          </p>
+          <p>
+            <strong class="key">Necessity</strong> of a change is the extra time the current phase then takes, compared with six unchanged copies. A copy that does not finish the phase within 6&nbsp;s, or knocks over a placed cube, counts as 6&nbsp;s.
+          </p>
+          <p>
+            <strong class="key">Contribution</strong> of each side measures how much it changes the executed action. From the same state we compute the skill action \(a_\mu\), the action \(a_{\mathrm{in}}\) under the input warp only, the action \(a_{\mathrm{out}}\) under the output warp only, and the executed action \(a\) under both. The two-player Shapley value splits \(a - a_\mu\) exactly between the two sides,
+          </p>
+        </div>
+        <div class="content has-text-centered equation">
+          \[\Delta_{\mathrm{in}} = \tfrac{1}{2}\big[(a_{\mathrm{in}} - a_\mu) + (a - a_{\mathrm{out}})\big], \qquad \Delta_{\mathrm{out}} = \tfrac{1}{2}\big[(a_{\mathrm{out}} - a_\mu) + (a - a_{\mathrm{in}})\big],\]
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            and the contribution of a side is \(\lVert \Delta \rVert\) relative to the diagonal \(2\sqrt{d_a}\) of the action range \([-1, 1]^{d_a}\). This is the <strong class="key">share of the executed action</strong> each side accounts for, plotted at the bottom of the figure: 0% means the side leaves the skill's action unchanged, and 100% would be a change across the full action range.
+          </p>
+          <p>
+            Over 32 held-out episodes with four cubes, a phase takes about a second. Switching off the <span class="term-warp">output warp</span> costs 1.05&nbsp;s in <strong class="key">release and depart</strong>, but only 0.27&ndash;0.34&nbsp;s in the other phases, since the frozen skill is a grasp-and-hold policy that never releases a cube on its own. Switching off the <span class="term-warp">input warp</span> costs 0.95&ndash;1.56&nbsp;s in <strong class="key">every phase</strong>, because it steers the skill throughout the episode.
+          </p>
+          <p>
+            In the episode below, \(W_{\mathrm{in}}\) accounts for <strong class="key">20&ndash;40% of the executed action</strong> throughout, but its necessity stays low during approach and carry, where the skill's own feedback absorbs a short gap. At the releases the necessity rises, and it comes almost entirely from \(W_{\mathrm{out}}\): the skill is a grasp-and-hold policy and never lets go, so \(W_{\mathrm{out}}\) overrides its action to release the cube. The output side thus adds a missing behavior at a few critical moments, and the input side steers the skill continuously.
           </p>
           <!-- Two copies: in dark mode the first is inverted and the second, clipped to the rendered frames, keeps them untouched. -->
           <div class="dark-plot">
             <img src="./static/images/necessity_episode.png" alt="Interventional estimate of when the input and output warps are needed across the phases of an episode.">
             <img src="./static/images/necessity_episode.png" alt="" aria-hidden="true" class="dark-plot-keep">
           </div>
+          <p class="figure-caption">One cube stacking episode with \(h=6\), four cubes in one stack. Top, scene views framed in the color of the manipulation phase. Middle, necessity: the extra time the current phase takes when the full warp (black), only \(W_{\mathrm{in}}\) (purple) or only \(W_{\mathrm{out}}\) (orange) is held at the identity, or the full warp pauses for 0.5&nbsp;s (dashed gray). Bottom, contribution: the share of the executed action that each side accounts for.</p>
         </div>
       </div>
     </div>
