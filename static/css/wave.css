@@ -588,3 +588,11 @@ html[data-theme="dark"] .wv-scale-track { color: #7d838b; }
 html[data-theme="dark"] .wv-tasks { border-bottom-color: #2a2d33; }
 html[data-theme="dark"] .wv-task-row .button:not(.is-dark) { background: #262a30; border-color: #3a3e45; color: #c9ccd1; }
 html[data-theme="dark"] .wv-task-row .button.is-dark { background: #eceef1; color: #171717; }
+
+/* Related Work tables: text columns wrap, first column bold, WAVE row highlighted. */
+.table.related { font-size: 0.85rem; }
+.table.related th { white-space: nowrap; }
+.table.related td { vertical-align: top; line-height: 1.45; }
+.table.related td:first-child { min-width: 9rem; }
+.table.related tr.is-ours { background: #f5f5f5; font-weight: 600; }
+html[data-theme="dark"] .table.related tr.is-ours { background: #262a30; }

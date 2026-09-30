@@ -448,18 +448,47 @@
     <!-- Related work. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3" id="related">Related Links</h2>
-
+        <h2 class="title is-3" id="related">Related Work</h2>
         <div class="content has-text-justified">
           <p>
-            <a href="https://arxiv.org/abs/2404.01220">Entity-Centric Reinforcement Learning</a> introduces the Entity Interaction Transformer, which we compare against both trained directly and distilled from the frozen skill.
+            Methods that learn multi-object manipulation directly report whole-task success up to six objects, planners and scripted primitives need a symbolic model, and methods that edit a frozen policy target its own task or dynamics, sensor and task shifts. None edits a frozen skill to generalize across the number of objects.
           </p>
+        </div>
+        <div class="table-container">
+          <table class="table related is-fullwidth is-hoverable">
+            <thead><tr><th>Approach</th><th>Methods</th><th>Largest object count reported</th><th>Difference to WAVE</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Set and entity-centric policies</strong></td><td><a href="https://arxiv.org/abs/1703.06114">Deep Sets</a>, <a href="https://arxiv.org/abs/1806.01830">Relational RL</a>, <a href="https://arxiv.org/abs/1912.11032">Li et al. 2020</a>, <a href="https://arxiv.org/abs/2404.01220">ECRL</a>, <a href="https://arxiv.org/abs/2412.18907">EC-Diffuser</a>, <a href="https://arxiv.org/abs/2602.02722">HECRL</a>, <a href="https://arxiv.org/abs/2201.13388">Linear Relation Networks</a>, <a href="https://arxiv.org/abs/1906.03710">Lanier et al.</a>, <a href="https://arxiv.org/abs/2206.12030">PAIR</a>, <a href="https://arxiv.org/abs/2006.15055">Slot Attention</a>, <a href="https://arxiv.org/abs/2011.14381">SMORL</a></td><td>Whole-task success up to <strong>six objects</strong> (Li et al.: 0.75 at six); 30 blocks only in a symbolic world without physics (<a href="https://arxiv.org/abs/2009.12462">Janisch et al.</a>)</td><td>Learn the manipulation itself; the input grows with every object. WAVE reuses a skill and reads a fixed-size local view.</td></tr>
+              <tr><td><strong>Offline and hierarchical goal-conditioned RL</strong></td><td><a href="https://arxiv.org/abs/2410.20092">OGBench</a>, <a href="https://arxiv.org/abs/2506.04168">SHARSA</a>, <a href="https://arxiv.org/abs/2512.10926">Decoupled Q-Chunking</a></td><td>Stacking: 0.23 at two cubes, none at three or four; at most 0.36 at eight cubes (five-goal mean)</td><td>One policy per count, trained from data; WAVE trains once and generalizes zero-shot to larger counts.</td></tr>
+              <tr><td><strong>Size-extrapolation theory</strong></td><td><a href="https://arxiv.org/abs/2010.08853">Yehudai et al.</a>, <a href="https://arxiv.org/abs/2410.01104">Veličković et al.</a></td><td>&ndash;</td><td>Networks that pool over every entity can fail on larger sets and generalize when their local structure does not change with the count; nothing WAVE reads grows with the count.</td></tr>
+              <tr><td><strong>Task and motion planning, scripted primitives</strong></td><td><a href="https://arxiv.org/abs/1802.08705">PDDLStream</a>, <a href="https://arxiv.org/abs/2105.14074">Bilevel planning</a>, <a href="https://arxiv.org/abs/2010.14406">Transporter Networks</a>, <a href="https://arxiv.org/abs/2102.13177">Lin et al.</a>, <a href="https://arxiv.org/abs/2312.09120">Dispatcher/Executor</a></td><td>Any count, given a symbolic model and motion primitives</td><td>WAVE has neither a model nor primitives; the learned manipulation itself must generalize.</td></tr>
+              <tr><td><strong>Reusing a skill without freezing it</strong></td><td><a href="https://arxiv.org/abs/1803.03835">Kickstarting</a>, <a href="https://arxiv.org/abs/2204.02372">JSRL</a></td><td>&ndash;</td><td>Leave the multi-object behavior to a network trained on the new task; in our baselines JSRL succeeds in at most 0.08 of one-cube episodes.</td></tr>
+              <tr><td><strong>Editing a frozen policy's interface</strong></td><td><a href="https://arxiv.org/abs/1812.06298">Residual policy learning</a>, <a href="https://arxiv.org/abs/1812.03201">Residual RL</a>, <a href="https://arxiv.org/abs/2412.13630">Policy Decorator</a>, <a href="https://arxiv.org/abs/2407.16677">ResiP</a>, <a href="https://arxiv.org/abs/2506.15799">DSRL</a>, <a href="https://arxiv.org/abs/2605.19919">ZPRL</a>, <a href="https://arxiv.org/abs/2606.11489">CLAE</a>, <a href="https://arxiv.org/abs/2605.17144">COAST</a>, <a href="https://arxiv.org/abs/2602.03973">VLS</a>, <a href="https://arxiv.org/abs/2606.31043">Warp RL</a>, <a href="https://arxiv.org/abs/2305.02554">Pivoting</a>, <a href="https://arxiv.org/abs/2604.03905">DC-Ada</a>, <a href="https://arxiv.org/abs/2509.22310">APB</a></td><td>&ndash;</td><td>Refine a policy on its own task, or absorb dynamics, sensor or task shifts; none targets the number of objects. WAVE edits input and output and re-decides the edit at every step.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="title is-4" id="related-editing">Editing a Frozen Policy</h3>
+        <div class="content has-text-justified">
           <p>
-            <a href="https://arxiv.org/abs/1912.11032">Relational RL for multi-object manipulation</a> and <a href="https://arxiv.org/abs/2506.04168">SHARSA</a> learn the manipulation itself and report whole-task success of at most 0.75 at six and 0.36 at eight objects.
+            Interface-editing methods by where they edit a frozen policy, in what form, whether the edit is a function of the current state, and which shift it is meant to absorb. Closest to WAVE, Pivoting learns diagonal projections of the perceived state and commanded action of a frozen skill, but chooses them once per episode; with many objects the scene changes during the episode, so WAVE chooses the warp anew at every step.
           </p>
-          <p>
-            <a href="https://arxiv.org/abs/1812.06298">Residual Policy Learning</a>, <a href="https://arxiv.org/abs/1812.03201">Residual RL</a> and <a href="https://arxiv.org/abs/2606.31043">Warp RL</a> keep a trained policy frozen and learn a correction on its actions, close to warping only the output side of the skill.
-          </p>
+        </div>
+        <div class="table-container">
+          <table class="table related is-fullwidth is-hoverable">
+            <thead><tr><th>Method</th><th>Edit site</th><th>Edit form</th><th>Re-decided per step?</th><th>Shift the edit absorbs</th></tr></thead>
+            <tbody>
+              <tr><td><a href="https://arxiv.org/abs/1812.03201">Residual RL</a> and variants</td><td>action</td><td>additive, bounded</td><td>yes</td><td>same task, refined</td></tr>
+              <tr><td><a href="https://arxiv.org/abs/2606.31043">Warp RL</a></td><td>action distribution</td><td>spline flow</td><td>yes</td><td>dynamics</td></tr>
+              <tr><td><a href="https://arxiv.org/abs/2606.11489">CLAE</a></td><td>internal activations</td><td>affine</td><td>yes</td><td>behavior mode</td></tr>
+              <tr><td><a href="https://arxiv.org/abs/2605.19919">ZPRL</a></td><td>inserted latent</td><td>latent perturbation</td><td>yes</td><td>same task, refined</td></tr>
+              <tr><td><a href="https://arxiv.org/abs/2604.03905">DC-Ada</a></td><td>observation</td><td>transform found by reward-only random search</td><td>no</td><td>sensor heterogeneity</td></tr>
+              <tr><td><a href="https://arxiv.org/abs/2509.22310">APB</a></td><td>before and after a backbone</td><td>dense linear</td><td>no</td><td>task (meta-transfer)</td></tr>
+              <tr><td><a href="https://arxiv.org/abs/2305.02554">Pivoting</a></td><td>observation + action</td><td>diagonal scaling</td><td>no, once per episode</td><td>object properties (dynamics)</td></tr>
+              <tr><td><a href="https://jmlr.org/papers/v8/taylor07a.html">Inter-task mappings</a></td><td>state + action</td><td>hand-specified map</td><td>no</td><td>task pair</td></tr>
+              <tr class="is-ours"><td><span class="wave">WAVE</span> (ours)</td><td>observation + action</td><td>per-channel discrete affine</td><td>yes</td><td><em>scene composition (object count)</em></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
