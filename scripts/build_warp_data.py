@@ -31,19 +31,21 @@ OUT_INDEX = ROOT / "static/js/warp_data.js"
 OUT_TASKS = ROOT / "static/js/warp_tasks"
 OUT_VID = ROOT / "static/videos/warp"
 
-# task key, label, embodiment group, robot / scene of the 3-D view, recording directory
+# task key, label, embodiment group, robot / scene of the 3-D view, recording directory.
+# *_s / *_h128: rendered with the recorder's --success-only (3 episodes drawn among the successful
+# worlds); the Panda wall at 6 cubes over 128 worlds, since 8 cubes gave 1 success in 128.
 TASKS = [
     ("gantry_stacking_h3", "Stacking (h=3)", "Gantry", "gantry", "gantry_wide", "web_gantry_stacking_h3_n15"),
-    ("gantry_stacking_h6", "Stacking (h=6)", "Gantry", "gantry", "gantry_wide", "web_gantry_stacking_h6_n15"),
-    ("gantry_pyramid", "Pyramid", "Gantry", "gantry", "gantry_wide", "web_gantry_pyramid_n15"),
+    ("gantry_stacking_h6", "Stacking (h=6)", "Gantry", "gantry", "gantry_wide", "web_gantry_stacking_h6_n15_s"),
+    ("gantry_pyramid", "Pyramid", "Gantry", "gantry", "gantry_wide", "web_gantry_pyramid_n15_s"),
     ("gantry_wall", "Wall", "Gantry", "gantry", "gantry_wide", "web_gantry_wall_n15"),
     ("gantry_square", "Square", "Gantry", "gantry", "gantry_wide", "web_gantry_square_n15"),
     ("gantry_line", "Line", "Gantry", "gantry", "gantry_wide30", "web_gantry_line_n15"),
-    ("panda_stacking_h3", "Stacking (h=3)", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_stacking_h3_n7"),
-    ("panda_pyramid", "Pyramid", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_pyramid_n6"),
-    ("panda_wall", "Wall", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_wall_n8"),
+    ("panda_stacking_h3", "Stacking (h=3)", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_stacking_h3_n7_s"),
+    ("panda_pyramid", "Pyramid", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_pyramid_n6_s"),
+    ("panda_wall", "Wall", "Panda gripper", "panda_gripper", "panda_stack", "web_panda_wall_n6_h128"),
     ("panda_push_line", "Line", "Panda pusher", "panda_pusher", "panda_push", "web_panda_push_line_n10"),
-    ("panda_push_square", "Square", "Panda pusher", "panda_pusher", "panda_push", "web_panda_push_square_n10"),
+    ("panda_push_square", "Square", "Panda pusher", "panda_pusher", "panda_push", "web_panda_push_square_n10_s"),
 ]
 
 # Physical quantities, built from the recording's channel groups (meta.group_specs).
