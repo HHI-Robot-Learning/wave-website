@@ -310,6 +310,21 @@
         <p class="figure-caption">
           Whole-task success on the Panda arm for every evaluated count (gripper tasks to 15, pusher line to 20, pusher square to 30).
         </p>
+
+        <h3 class="title is-4" id="real-world">Real-World Panda</h3>
+        <div class="content has-text-justified">
+          <p>
+            We deployed a stacking policy trained in simulation on a physical Panda arm, with cube poses tracked from AprilTag fiducials by four calibrated RGB cameras. It placed all five cubes of a two-tower task in <strong class="key">8 of 10 runs</strong>, and a policy fine-tuned for five-cube towers built <strong class="key">a five-high tower</strong>.
+          </p>
+          <video class="real-video" controls muted playsinline preload="metadata" poster="./static/videos/real_panda_two_towers.jpg">
+            <source src="./static/videos/real_panda_two_towers.mp4" type="video/mp4">
+          </video>
+          <p class="figure-caption">All ten evaluation runs of the two-tower task (5&times; real time), with the simulated replay of each run inset at the top left.</p>
+          <video class="real-video" controls muted playsinline preload="metadata" poster="./static/videos/real_panda_tower5.jpg">
+            <source src="./static/videos/real_panda_tower5.mp4" type="video/mp4">
+          </video>
+          <p class="figure-caption">A policy fine-tuned for five-cube towers building a five-high tower (real time, with sound).</p>
+        </div>
       </div>
     </div>
     <!--/ Count generalization. -->
@@ -429,27 +444,6 @@
       </div>
     </div>
     <!--/ Warp explorer. -->
-
-    <!-- Real robot. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3" id="real-world">Real-World Panda</h2>
-        <div class="content has-text-justified">
-          <p>
-            We deployed a stacking policy trained in simulation on a physical Panda arm, with cube poses tracked from AprilTag fiducials by four calibrated RGB cameras. It placed all five cubes of a two-tower task in <strong class="key">8 of 10 runs</strong>, and a policy fine-tuned for five-cube towers built <strong class="key">a five-high tower</strong>.
-          </p>
-          <video class="real-video" controls muted playsinline preload="metadata" poster="./static/videos/real_panda_two_towers.jpg">
-            <source src="./static/videos/real_panda_two_towers.mp4" type="video/mp4">
-          </video>
-          <p class="figure-caption">All ten evaluation runs of the two-tower task (5&times; real time), with the simulated replay of each run inset at the top left.</p>
-          <video class="real-video" controls muted playsinline preload="metadata" poster="./static/videos/real_panda_tower5.jpg">
-            <source src="./static/videos/real_panda_tower5.mp4" type="video/mp4">
-          </video>
-          <p class="figure-caption">A policy fine-tuned for five-cube towers building a five-high tower (real time, with sound).</p>
-        </div>
-      </div>
-    </div>
-    <!--/ Real robot. -->
 
     <!-- Related work. -->
     <div class="columns is-centered">
