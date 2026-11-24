@@ -1,8 +1,11 @@
-"""Build static/js/data.js for the interactive charts from the paper's count_curve_data.csv.
+"""Build static/js/data.js for the interactive charts from the paper repository's figures.
 
-    python scripts/build_data.py [path/to/count_curve_data.csv]
+    python3 scripts/build_data.py [path/to/paper/figures]
 
-Defaults to ../2026-ICLR-WAVE-NEW/figures/count_curve_data.csv next to this repository.
+Defaults to ../wave-iclr-2026/figures next to this repository. WAVE, the frozen skill, the
+Panda arm and the ablations come from count_curve_data.csv. The baselines other than the skill
+alone come from the paper's baseline figures (line_baselines.pdf, tower_baselines.pdf), because
+count_curve_data.csv holds an older evaluation of them (see baseline_curves.py).
 """
 import csv
 import json
@@ -10,8 +13,12 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from baseline_curves import baseline_curves
+
 ROOT = Path(__file__).resolve().parent.parent
-SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "2026-ICLR-WAVE-NEW/figures/count_curve_data.csv"
+FIGURES = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "wave-iclr-2026/figures"
+SRC = FIGURES / "count_curve_data.csv"
+BASELINE_FIGURES = {"line": FIGURES / "line_baselines.pdf", "tower3": FIGURES / "tower_baselines.pdf"}
 OUT = ROOT / "static/js/data.js"
 
 # Same labels and colors as the paper's count_curve.py.
@@ -48,6 +55,7 @@ PUB_LABEL_POS = {
 }
 BASELINES = {
     "wave": ("WAVE", "#1f5fbf"),
+    "fixed_input_edit": ("input edit fixed per episode", "#e0457b"),
     "skill_alone": ("skill alone (μ)", "#9a2e35"),
     "finetune": ("fine-tune μ", "#2a8f5c"),
     "cropft1": ("fine-tune μ + crop, ω=1", "#d4a017"),
@@ -77,6 +85,16 @@ for pts in rows.values():
     pts.sort()
 
 
+# WAVE is the first-episode curve of the count generalization figure, as in the paper's tables
+# (the baseline figure draws an older pooled evaluation of it). The skill alone is drawn without
+# markers in the baseline figure, so it comes from count_curve_data.csv.
+baseline_points = {}
+for task, figure_pdf in BASELINE_FIGURES.items():
+    baseline_points[task] = baseline_curves(figure_pdf)
+    baseline_points[task]["wave"] = rows[f"ours_{task}"]
+    baseline_points[task]["skill_alone"] = rows[f"bl_skill_alone_{task}"]
+
+
 def series(key, label, color, **extra):
     return dict(key=key, label=label, color=color, pts=rows[key], **extra)
 
@@ -87,9 +105,10 @@ data = {
     + [series(k, l, GRAY, published=True, label_pos=PUB_LABEL_POS[k]) for k, l in PUBLISHED.items()],
     "panda": [series(f"panda_{t}", l, c) for t, (l, c) in TASKS.items() if rows.get(f"panda_{t}")],
     "baselines": {
-        task: [series(f"bl_{arm}_{task}", l, c, dash=arm == "skill_alone") for arm, (l, c) in BASELINES.items()
-               if rows.get(f"bl_{arm}_{task}")]
-        for task in ["line", "tower3"]
+        task: [dict(key=f"bl_{arm}_{task}", label=label, color=color, pts=baseline_points[task][arm],
+                    dash=arm == "skill_alone")
+               for arm, (label, color) in BASELINES.items()]
+        for task in BASELINE_FIGURES
     },
     "ablations": {
         kind: {

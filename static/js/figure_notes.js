@@ -18,7 +18,7 @@ window.FIGURE_NOTES = {
     {
       rect: [322, 30, 178, 70],
       title: 'Crop \\(\\chi(s, x^*)\\)',
-      body: 'A fixed-width local view around \\(x^*\\): its position and goal, the robot state, the skill\'s action on the unwarped input, and geometric features of every other object within a fixed range. Thirty cubes produce the same kind of input as nine.',
+      body: 'A fixed-width local view around \\(x^*\\): its position and goal, the robot state, the skill\'s action on the unwarped input, and geometric features of every other object near \\(x^*\\), its goal, or the paths from the gripper to \\(x^*\\) and from \\(x^*\\) to its goal. Thirty cubes produce the same kind of input as nine.',
       link: { href: '#warping-policy', label: 'See how the crop is encoded' },
     },
     {
@@ -30,7 +30,7 @@ window.FIGURE_NOTES = {
     {
       rect: [614, 196, 206, 92],
       title: 'Input warp \\(W_{\\mathrm{in}}\\)',
-      body: 'Applies \\(\\tilde z_j = m_j z_j + o_j\\) to every channel the skill reads. Editing the input makes the skill itself compute a corrected action, for example a detour around a stack. Warping only the input nearly matches the full warp.',
+      body: 'Applies \\(\\tilde z_j = m_j z_j + o_j\\) to every channel the skill reads. Editing the input makes the skill itself compute a corrected action, for example a detour around a stack. On stacking and the square, warping only the input nearly matches the full warp; on the pyramid, where cubes rest on each other, neither side alone is enough.',
       link: { href: '#ablations', label: 'See the warp-side ablation' },
     },
     {
@@ -41,7 +41,7 @@ window.FIGURE_NOTES = {
     {
       rect: [1084, 196, 250, 92],
       title: 'Output warp \\(W_{\\mathrm{out}}\\)',
-      body: 'Edits every action channel of the skill the same way. It produces behavior the skill never learned, such as releasing a cube on top of a stack. Warping only the output collapses by ten cubes.',
+      body: 'Edits every action channel of the skill the same way. It produces behavior the skill never learned, such as releasing a cube on top of a stack. Warping only the output collapses by ten cubes on stacking and the square.',
       link: { href: '#ablations', label: 'See the warp-side ablation' },
     },
     {
@@ -73,12 +73,12 @@ window.FIGURE_NOTES = {
     {
       rect: [1180, 366, 68, 256],
       title: 'Executed action \\(a\\)',
-      body: 'The action sent to the robot, \\(a = W_{\\mathrm{out}}(\\tilde a; u)\\): servo-target deltas.',
+      body: 'The action sent to the robot, \\(a = W_{\\mathrm{out}}(\\tilde a; u)\\). On the gantry: deltas of the servo targets of its seven actuators (three translations, three wrist rotations, the grip). On the Panda arm: joint velocities, plus a grip command with the gripper.',
     },
     {
       rect: [110, 470, 204, 144],
       title: 'Environment \\(M_N\\)',
-      body: 'The multi-object scene. Policies train on one to six to nine cubes and are evaluated zero-shot on up to thirty.',
+      body: 'The multi-object scene. Each policy trains on one to between six and nine cubes, depending on the task and robot, and is evaluated zero-shot on up to thirty.',
       link: { href: '#results', label: 'See every task' },
     },
   ],
@@ -93,7 +93,7 @@ window.FIGURE_NOTES = {
     {
       rect: [28, 239, 184, 96],
       title: 'Pair rows',
-      body: 'One row of geometric features for every other object: its position relative to \\(x^*\\), to the goal of \\(x^*\\) and to the robot, and whether it is placed. Objects beyond a fixed range from \\(x^*\\) are masked.',
+      body: 'One row of geometric features for every other object: its position relative to \\(x^*\\), to the goal of \\(x^*\\) and to the robot, and whether it is placed. An object farther than a fixed range from \\(x^*\\), from its goal and from the paths between them is masked out, so adding objects far away changes nothing the warping policy computes.',
     },
     {
       rect: [234, 244, 80, 96],
@@ -103,22 +103,22 @@ window.FIGURE_NOTES = {
     {
       rect: [326, 157, 148, 189],
       title: 'Elementwise minimum',
-      body: 'Reduces the per-object scores to one neighborhood encoding. The closest obstacle is the one an attempt is most likely to hit, and a neighbor five centimeters away yields the same score among three objects and among thirty. A mean or softmax would dilute as \\(N\\) grows.',
+      body: 'Reduces the per-object scores to one neighborhood encoding. The closest obstacle is the one an attempt is most likely to hit, and a neighbor five centimeters away yields the same score among three objects and among thirty. Count generalization does not depend on the minimum: with a mean or a learned attention-weighted mean instead, the mean success beyond the training counts is 0.55 and 0.64 on stacking (minimum 0.82), and 0.47 and 0.66 on the pyramid (minimum 0.47).',
     },
     {
       rect: [538, 118, 118, 101],
       title: 'Encoder',
-      body: 'Self-attention over two tokens: the core token and the neighborhood encoding.',
+      body: 'A two-layer transformer encoder (width 128, four heads) over two tokens: the core token and the neighborhood encoding.',
     },
     {
       rect: [662, 58, 220, 99],
       title: 'Channel-group queries',
-      body: 'One learned query per channel group, the channels that carry one physical quantity: the presented goal, the object state, the robot state and the action.',
+      body: 'One learned query per channel group, the channels that carry one physical quantity: the presented goal, the object state, the robot state and the action. In total the warp edits 55 channels: 47 the skill reads and 8 it commands.',
     },
     {
       rect: [594, 239, 140, 100],
       title: 'Decoder',
-      body: 'The channel-group queries cross-attend the encoded crop, giving one token per channel group.',
+      body: 'A two-layer transformer decoder: the channel-group queries cross-attend the encoded crop, giving one token per channel group.',
     },
     {
       rect: [750, 238, 25, 95],
@@ -133,17 +133,17 @@ window.FIGURE_NOTES = {
     {
       rect: [888, 58, 210, 290],
       title: 'Categorical outputs',
-      body: 'One categorical distribution per warp parameter over a fixed grid, plus one bin that repeats the value applied at the previous step. Sampled while training, argmax at evaluation.',
+      body: 'One categorical distribution per warp parameter, 110 in total (a multiplier and an offset for each of the 55 channels), over a fixed grid plus one bin that repeats the value applied at the previous step. Sampled while training, argmax at evaluation.',
     },
     {
       rect: [14, 414, 358, 52],
       title: 'Multiplier grid',
-      body: 'Dense between take-over (\\(m = 0\\)) and identity (\\(m = 1\\)). Values in between damp a channel, values above one boost it and negative values reverse it. Every distribution starts with most of its mass on the identity, so training starts from the unwarped skill.',
+      body: '25 values from \\(-2\\) to \\(2\\), dense between take-over (\\(m = 0\\)) and identity (\\(m = 1\\)). Values in between damp a channel, values above one boost it and negative values reverse it. Every distribution starts with most of its mass on the identity, so training starts from the unwarped skill.',
     },
     {
       rect: [452, 414, 358, 52],
       title: 'Offset grid',
-      body: 'A signed ladder in multiples of a step size \\(u\\) per robot (1.5 cm on the gantry), starting with most of its mass at zero.',
+      body: 'A signed ladder of 21 values in multiples of a step size \\(u\\) per robot (1.5 cm on the gantry), up to \\(\\pm 32u\\), starting with most of its mass at zero.',
     },
     {
       rect: [893, 405, 200, 126],

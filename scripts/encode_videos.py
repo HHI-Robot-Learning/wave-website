@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.home() / "Downloads/wave_videos_submission"
+SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "wave-iclr-2026/wave_videos_submission"
 OUT = ROOT / "static/videos"
 
 SIM = {

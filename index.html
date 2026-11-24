@@ -64,45 +64,45 @@
           <h1 class="title is-1 publication-title">Object Count Generalization Is an <span class="title-accent">Interface</span> Problem: <span class="title-warp">Warping</span> a Frozen Skill Instead of Retraining It</h1>
           <!-- TODO: wrap each name in <a href="..."> once personal pages are chosen. -->
           <div class="is-size-5 publication-authors">
-            <span class="author-block">Paul Mattes<sup>1</sup>,</span>
-            <span class="author-block">Ayman Abdeldayem<sup>1</sup>,</span>
-            <span class="author-block">Denis Shcherba<sup>1</sup>,</span>
-            <span class="author-block">Wojciech Samek<sup>2</sup>,</span>
-            <span class="author-block">Marc Toussaint<sup>2</sup></span>
+            <span class="author-block">Paul Mattes<sup>1,2,*</sup>,</span>
+            <span class="author-block">Ayman Abdeldayem<sup>1,2</sup>,</span>
+            <span class="author-block">Denis Shcherba<sup>1,2</sup>,</span>
+            <span class="author-block">Wojciech Samek<sup>1,2,3</sup>,</span>
+            <span class="author-block">Marc Toussaint<sup>1,2,4</sup></span>
           </div>
 
           <div class="affiliation-logos">
-            <a class="logo-item" href="https://www.hhi.fraunhofer.de"><sup>1</sup><img class="logo-light" src="./static/images/logos/fraunhofer_hhi.svg" alt="Fraunhofer HHI"><img class="logo-dark" src="./static/images/logos/fraunhofer_hhi_dark.svg" alt="Fraunhofer HHI"></a>
+            <a class="logo-item" href="https://www.hhi.fraunhofer.de"><sup>1</sup><img class="logo-light" src="./static/images/logos/fraunhofer_hhi.svg" alt="Fraunhofer Heinrich Hertz Institute"><img class="logo-dark" src="./static/images/logos/fraunhofer_hhi_dark.svg" alt="Fraunhofer Heinrich Hertz Institute"></a>
             <a class="logo-item" href="https://www.tu.berlin"><sup>2</sup><img src="./static/images/logos/tu_berlin.svg" alt="Technische Universität Berlin"></a>
+            <a class="logo-item" href="https://bifold.berlin"><sup>3</sup><img class="logo-light" src="./static/images/logos/bifold.svg" alt="BIFOLD – Berlin Institute for the Foundations of Learning and Data"><img class="logo-dark" src="./static/images/logos/bifold_dark.svg" alt="BIFOLD – Berlin Institute for the Foundations of Learning and Data"></a>
+            <a class="logo-item" href="https://robotics-institute-germany.de"><sup>4</sup><img class="logo-light" src="./static/images/logos/rig.svg" alt="Robotics Institute Germany"><img class="logo-dark" src="./static/images/logos/rig_dark.svg" alt="Robotics Institute Germany"></a>
           </div>
+          <p class="corresponding-author"><sup>*</sup>Corresponding author: <a href="mailto:paul.mattes@hhi.fraunhofer.de">paul.mattes@hhi.fraunhofer.de</a></p>
 
           <div class="column has-text-centered">
             <div class="publication-links">
-              <!-- TODO: add the links once the paper and code are public. -->
-              <!-- PDF Link. -->
               <span class="link-block">
-                <a class="external-link button is-normal is-rounded is-dark" disabled>
+                <a class="external-link button is-normal is-rounded is-dark" href="./static/paper/wave.pdf">
                   <span class="icon">
                       <i class="fas fa-file-pdf"></i>
                   </span>
-                  <span>Paper (Coming Soon)</span>
+                  <span>Paper</span>
                 </a>
               </span>
               <span class="link-block">
-                <a class="external-link button is-normal is-rounded is-dark" disabled>
+                <a class="external-link button is-normal is-rounded is-dark" href="https://arxiv.org/abs/2611.30765">
                   <span class="icon">
                       <i class="ai ai-arxiv"></i>
                   </span>
-                  <span>arXiv (Coming Soon)</span>
+                  <span>arXiv</span>
                 </a>
               </span>
-              <!-- Code Link. -->
               <span class="link-block">
-                <a class="external-link button is-normal is-rounded is-dark" disabled>
+                <a class="external-link button is-normal is-rounded is-dark" href="https://github.com/HHI-Robot-Learning/26-WAVE">
                   <span class="icon">
                       <i class="fab fa-github"></i>
                   </span>
-                  <span>Code (Coming Soon)</span>
+                  <span>Code</span>
                   </a>
               </span>
             </div>
@@ -141,10 +141,10 @@
             Reinforcement learning policies for robot manipulation degrade when the number of objects \(N\) in the scene grows beyond the training range. This is a covariate shift that also changes the dimension of the state. We propose <span class="wave">WAVE</span> (<b>W</b>arping <b>A</b>ctions and <b>V</b>iews of an <b>E</b>xpert), which extends a <span class="term-frozen">pretrained single-object skill</span> to many objects <strong class="key">without updating its weights</strong>.
           </p>
           <p>
-            <span class="wave">WAVE</span> has three parts. First, a <span class="term-trained">selection policy</span> picks the one object the robot works on next. Second, a <span class="term-trained">warping policy</span> reads a local view of the scene around that object, whose size does not depend on \(N\). It emits <span class="term-warp">a multiplier and an offset</span> for every quantity the skill reads and every action it outputs. Third, the <span class="term-frozen">skill</span> acts under this <span class="term-warp">affine warp</span>. It is shown a scene that holds a single object, while the warp steers it around the objects it is not shown and edits the actions that are sent to the robot. Both the selection and warping policies are trained with PPO on the multi-object reward and use the skill as a black box, so <span class="wave">WAVE</span> is <strong class="key">task-general and skill-agnostic</strong>. It requires only that the skill was trained on the same embodiment and that every object has a goal pose. We also analyze the probability that the composition places all \(N\) objects within a budget of skill invocations that grows linearly in \(N\).
+            <span class="wave">WAVE</span> has three parts. First, a <span class="term-trained">selection policy</span> picks the one object the robot works on next. Second, a <span class="term-trained">warping policy</span> reads a local view of the scene around that object, whose size does not depend on \(N\). It emits <span class="term-warp">a multiplier and an offset</span> for every quantity the skill reads and every action it outputs. Third, the <span class="term-frozen">skill</span> acts under this <span class="term-warp">affine warp</span>. It is shown a scene that holds a single object, while the warp steers it around the objects it is not shown and edits the actions that are sent to the robot. Both the selection and warping policies are trained with PPO on the multi-object reward and use the skill as a black box, so <span class="wave">WAVE</span> is <strong class="key">task-general and skill-agnostic</strong>. It requires only that the skill was trained on the same embodiment and that every object has a goal pose. We also bound the number of attempts needed to place all \(N\) objects, assuming positive expected net progress per attempt, and measure this progress for each object count.
           </p>
           <p>
-            We evaluate <span class="wave">WAVE</span> on cube arrangement tasks with a gantry robot and with a Franka Panda arm. Trained with at most nine cubes, it <strong class="key">generalizes zero-shot to several times its training count</strong>, on the gantry to scenes of up to <strong class="key">thirty cubes</strong>. Published methods that learn multi-object manipulation show count generalization up to <strong class="key">six objects</strong>. Fine-tuning the skill, learning from the same local view without it, and an entity transformer, even when distilled from the pretrained skill, all <strong class="key">collapse within their training counts</strong>.
+            We evaluate <span class="wave">WAVE</span> on cube arrangement tasks with a gantry robot and with a Franka Panda arm. Trained with at most nine cubes, it <strong class="key">generalizes zero-shot to several times its training count</strong>, on the gantry to scenes of up to <strong class="key">thirty cubes</strong>. Published methods that learn multi-object manipulation show count generalization up to <strong class="key">six objects</strong>. Fine-tuning the skill, learning from the same local view without it, and an entity transformer, even when distilled from the pretrained skill, all <strong class="key">collapse within their training counts</strong> under the same training budget. Code, videos and full results are available at <a href="https://hhi-robot-learning.github.io/wave-website/">https://hhi-robot-learning.github.io/wave-website/</a>.
           </p>
         </div>
       </div>
@@ -220,7 +220,13 @@
         <h3 class="title is-4" id="gantry">Gantry Robot</h3>
         <div class="content has-text-justified">
           <p>
-            Six cube arrangement tasks, each trained on one to between six and nine cubes and evaluated zero-shot on one to thirty. Trained on one to seven cubes, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the stacking (\(h=3\)) episodes at twenty cubes and <strong class="key">0.48</strong> at thirty, and <strong class="key">0.90</strong> of the line episodes at thirty. It stays above the 0.75 that Li et al. report at six objects up to <strong class="key">23 cubes</strong> on stacking and up to <strong class="key">30</strong> on the line.
+            Six cube arrangement tasks, each trained on one to between six and nine cubes and evaluated zero-shot on one to thirty. Every task completes at least <strong class="key">0.98</strong> of its episodes at six cubes. Trained on one to seven cubes, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the stacking (\(h=3\)) episodes at twenty cubes and <strong class="key">0.48</strong> at thirty. The line, square, pyramid and wall complete between <strong class="key">0.80</strong> (pyramid) and <strong class="key">0.97</strong> (line and square) at twice their training count, and the line <strong class="key">0.90</strong> at thirty. <span class="wave">WAVE</span> stays above the 0.75 that Li et al. report at six objects up to <strong class="key">23 cubes</strong> on stacking and up to <strong class="key">30</strong> on the line.
+          </p>
+          <p>
+            Stacking with \(h=6\) tests placement precision. Its training scenes hold at most seven cubes, one full stack and the base cube of a second, so no training episode places a cube onto a second stack. <span class="wave">WAVE</span> still builds the second stack up to five cubes high and completes 0.97 or more of the episodes up to eleven cubes. Success falls to 0.85 at twelve cubes, where the second stack needs its sixth cube, and is zero from 24 cubes on, lost to toppled stacks rather than missed placements.
+          </p>
+          <p>
+            At high counts, episodes fail mostly by <strong class="key">running out of time</strong> rather than by losing cubes. At thirty cubes on stacking (\(h=3\)), 0.49 of the episodes end at the time limit of 20&nbsp;s per cube and 0.06 because a cube left the workspace. With 60&nbsp;s per cube, success at thirty cubes rises from 0.48 to 0.67 on stacking and from 0.08 to 0.27 on the pyramid.
           </p>
         </div>
         <div class="video-grid is-3 is-uniform" style="--grid-ar: 1.436">
@@ -264,13 +270,16 @@
         <p class="figure-caption has-text-centered">One successful episode per task with 15 cubes, beyond every task’s training range of six to nine cubes, in real time from the initial scene until every cube is placed. Goal markers are hidden.</p>
         <div class="line-chart" data-chart="gantry"></div>
         <p class="figure-caption">
-          Whole-task success against the number of cubes \(N\). Colored: <span class="wave">WAVE</span> per task, mean over three seeds with the range shaded. Gray: published methods on their own tasks. Dashed red: the frozen skill alone. Hover for values, click a legend entry to hide it.
+          Whole-task success against the number of cubes \(N\). Colored: <span class="wave">WAVE</span> per task, mean over three seeds with the range shaded. Gray: published methods on their own tasks, which come from other tasks, simulators and embodiments and are shown for context only. Dashed red: the frozen skill alone on stacking (\(h=3\)). Hover for values, click a legend entry to hide it.
         </p>
 
         <h3 class="title is-4" id="panda">Franka Panda Arm</h3>
         <div class="content has-text-justified">
           <p>
-            The same method and reward, with a parallel-jaw gripper for stacking, pyramid and wall, and a sphere-tip pusher for the line and square. With the pusher, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the line episodes at nine cubes, <strong class="key">0.78</strong> at fifteen and <strong class="key">0.62</strong> at twenty. With the gripper, success already falls within the training range, mainly because the large body of the arm knocks neighbors off their goals.
+            The same method and reward, with a parallel-jaw gripper for stacking, pyramid and wall, and a sphere-tip pusher for the line and square, each embodiment with its own frozen skill. With the pusher, <span class="wave">WAVE</span> completes <strong class="key">0.95</strong> of the line episodes at nine cubes, its largest training count, <strong class="key">0.78</strong> at fifteen and <strong class="key">0.62</strong> at twenty, and failed episodes end only a cube or two short (14.2 of fifteen cubes placed on average). The square is harder, 0.60 at nine cubes and 0.10 at fifteen, since its interior slots leave the pusher no free approach side.
+          </p>
+          <p>
+            With the gripper, success already falls within the training range. Stacking completes <strong class="key">0.75</strong> at six cubes, level with the best published result, and 0.37 at ten, while the pyramid and the wall complete 0.22 and 0.05 at six. The likely cause is the large body of the arm, which knocks neighbors off their goals when cubes are placed next to each other.
           </p>
         </div>
         <div class="video-grid is-3 is-uniform" style="--grid-ar: 1.5">
@@ -314,7 +323,10 @@
         <h3 class="title is-4" id="real-world">Real-World Panda</h3>
         <div class="content has-text-justified">
           <p>
-            We deployed a stacking policy trained in simulation on a physical Panda arm, with cube poses tracked from AprilTag fiducials by four calibrated RGB cameras. It placed all five cubes of a two-tower task in <strong class="key">8 of 10 runs</strong>, and a policy fine-tuned for five-cube towers built <strong class="key">a five-high tower</strong>.
+            We deployed a stacking policy trained in simulation on a physical Panda arm, with cube poses tracked from AprilTag fiducials by four calibrated RGB cameras. In ten consecutive runs of a two-tower task, in which three of five cubes have to be moved, all five cubes reached their goals in <strong class="key">8 of 10 runs</strong> (95% Wilson interval 49&ndash;94%). The two failed runs stopped at a joint limit and at the time limit. Grasps often took several attempts: 68% of the close commands held a cube, and the policy recovered from failed grasps by trying again.
+          </p>
+          <p>
+            In <strong class="key">5 of the 10 runs</strong> the policy also let go of the last cube and both towers stood at the end. The policy never learned this final release, because in training an episode already succeeds when every cube is placed, even with the last cube still in the gripper. A policy fine-tuned for five-cube towers built <strong class="key">a five-high tower</strong>, which we did not evaluate systematically.
           </p>
           <video class="real-video" controls muted playsinline preload="metadata" poster="./static/videos/real_panda_two_towers.jpg">
             <source src="./static/videos/real_panda_two_towers.mp4" type="video/mp4">
@@ -335,7 +347,10 @@
         <h2 class="title is-3" id="baselines">Baselines</h2>
         <div class="content has-text-justified">
           <p>
-            We compare against nine baselines trained on the same gantry, task, reward and training counts, with the same skill wherever one is used. <strong class="key">No baseline succeeds with more than five cubes</strong>, even when given a scripted rule that only offers objects whose goal is currently fulfillable, which <span class="wave">WAVE</span> does not use.
+            We compare against ten baselines trained on the same gantry, task, reward and training counts, with the same skill wherever one is used. Nine of them <strong class="key">fail already within their training counts</strong>: they complete at most 0.02 of the episodes with six cubes and none with more, although most of them get a scripted rule that only offers objects whose goal is currently fulfillable, which <span class="wave">WAVE</span> does not use. For these nine, the comparison shows that they do not learn the multi-object task with our training budget, and it cannot tell how they would extrapolate if they did.
+          </p>
+          <p>
+            Only the tenth learns its training counts. It is <span class="wave">WAVE</span> with the input edit chosen at the first step and kept for the whole episode, as in the pivoting skills of Zhang et al. (2023). It <strong class="key">extrapolates worse</strong>: on stacking it completes 0.60 of the episodes at ten cubes and 0.08 at twenty, against 0.98 and 0.95 for <span class="wave">WAVE</span>, and on the line 0.55 and 0.35, against 1.00 and 0.93.
           </p>
         </div>
         <div class="buttons has-addons is-centered chart-tabs" id="baseline-tabs">
@@ -355,17 +370,21 @@
             </thead>
             <tbody>
               <tr class="is-ours"><td><b>WAVE</b></td><td>frozen</td><td>crop</td><td>learned</td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>0.90</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>1.00</b></td><td><b>0.48</b></td></tr>
+              <tr><td>input edit fixed per episode</td><td>frozen</td><td>crop</td><td>learned</td><td><b>1.00</b></td><td>0.93</td><td>0.98</td><td>0.75</td><td>0.25</td><td><b>1.00</b></td><td>0.98</td><td><b>1.00</b></td><td>0.90</td><td class="zero">0.00</td></tr>
               <tr><td>skill alone</td><td>frozen</td><td>none</td><td>scripted</td><td>0.79</td><td>0.35</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.97</td><td>0.17</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
-              <tr><td>TD7 on the crop</td><td>&ndash;</td><td>crop</td><td>scripted</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>fine-tuning \(\mu\)</td><td>fine-tuned</td><td>none</td><td>scripted</td><td>0.72</td><td>0.43</td><td>0.13</td><td>0.02</td><td class="zero">0.00</td><td>0.88</td><td>0.42</td><td>0.02</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>fine-tuning \(\mu\) on the crop, \(\omega=0\)</td><td>fine-tuned</td><td>crop</td><td>scripted</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
               <tr><td>fine-tuning \(\mu\) on the crop, \(\omega=1\)</td><td>fine-tuned</td><td>crop</td><td>scripted</td><td>0.96</td><td>0.43</td><td>0.03</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.98</td><td>0.64</td><td>0.03</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>JSRL (Uchendu et al., 2023)</td><td>guide, then fine-tuned</td><td>none</td><td>scripted</td><td>0.45</td><td>0.13</td><td>0.03</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.87</td><td>0.45</td><td>0.03</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
               <tr><td>HRL subgoals</td><td>frozen</td><td>crop</td><td>learned</td><td>0.54</td><td>0.18</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.83</td><td>0.53</td><td>0.10</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
+              <tr><td>TD7 on the crop</td><td>&ndash;</td><td>crop</td><td>scripted</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
               <tr><td>EIT (Haramati et al., 2024)</td><td>&ndash;</td><td>all</td><td>&ndash;</td><td>0.20</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.53</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
               <tr><td>EIT distilled from \(\mu\)</td><td>distilled</td><td>all</td><td>&ndash;</td><td>0.82</td><td>0.56</td><td>0.37</td><td class="zero">0.00</td><td class="zero">0.00</td><td>0.94</td><td>0.20</td><td class="zero">0.00</td><td class="zero">0.00</td><td class="zero">0.00</td></tr>
             </tbody>
           </table>
         </div>
         <p class="figure-caption">
-          Table: whole-task success, mean over three seeds; every seed of every baseline is at 0.00 at six and at thirty cubes. Chart: success pooled over every episode of 20 scenes per count and three seeds, so values differ slightly from the table.
+          Whole-task success of <span class="wave">WAVE</span> and all ten baselines, mean over three seeds. The columns give how each method uses the skill \(\mu\), which objects besides the selected one it sees, and how it picks the next object; a scripted selection only offers objects whose goal is currently fulfillable. Bold marks the highest mean per count. Every seed of every baseline except the fixed input edit is at 0.00 at thirty cubes and at most 0.05 at six. The chart shows every count from one to thirty, with the seed range shaded.
         </p>
       </div>
     </div>
@@ -377,7 +396,7 @@
         <h2 class="title is-3" id="ablations">Ablations</h2>
         <div class="content has-text-justified">
           <p>
-            Warping only the <span class="term-warp">input channels</span> <strong class="key">nearly matches the full warp</strong>, warping only the <span class="term-warp">output channels</span> <strong class="key">collapses by ten cubes</strong>, and warps with only multipliers or only offsets fall in between. Random selection completes no episode with five or more cubes on stacking and the pyramid, while a fixed nearest-first rule matches the learned selection policy on stacking and the square and falls behind it on the pyramid.
+            On stacking and the square, warping only the <span class="term-warp">input channels</span> <strong class="key">nearly matches the full warp</strong>, warping only the <span class="term-warp">output channels</span> <strong class="key">collapses by ten cubes</strong>, and warps with only multipliers or only offsets fall in between. On the pyramid, where cubes rest on each other and the release itself has to change, <strong class="key">neither side alone is enough</strong>. Random selection completes no episode with five or more cubes on stacking and the pyramid, while a fixed nearest-first rule matches the learned selection policy on stacking and the square and falls behind it on the pyramid.
           </p>
         </div>
         <div class="buttons has-addons is-centered chart-tabs" id="ablation-kind">
@@ -424,6 +443,29 @@
           </div>
           <p class="figure-caption">One cube stacking episode with \(h=6\), four cubes in one stack. Top, scene views framed in the color of the manipulation phase. Middle, necessity: the extra time the current phase takes when the full warp (black), only \(W_{\mathrm{in}}\) (purple) or only \(W_{\mathrm{out}}\) (orange) is held at the identity, or the full warp pauses for 0.5&nbsp;s (dashed gray). Bottom, contribution: the share of the executed action that each side accounts for.</p>
         </div>
+
+        <h3 class="title is-4" id="further-experiments">Further Experiments</h3>
+        <div class="content has-text-justified">
+          <p>
+            Each experiment changes one part of the setup above and keeps the frozen skill, trained on a single 16&nbsp;cm cube. Unless noted, the policies are the gantry policies above; "continued" means they were trained further on scenes with one to ten objects. Whole-task success, mean over three seeds.
+          </p>
+        </div>
+        <div class="table-container">
+          <table class="table related is-fullwidth is-hoverable">
+            <thead><tr><th>Experiment</th><th>What changes</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td><strong>One pair of policies for five tasks</strong></td><td>One warping and one selection policy trained on the line, square, wall, pyramid and stacking (\(h=4\)) at once, one to ten cubes</td><td>At least 0.90 on every task up to ten cubes. At thirty cubes 1.00 on the line and 0.93 on the square; at twenty 0.95 on stacking, 0.75 on the wall and 0.35 on the pyramid.</td></tr>
+              <tr><td><strong>Larger cubes</strong></td><td>Every cube 1.2 times the edge (19.2&nbsp;cm), five tasks, continued</td><td>0.93 at ten cubes and 0.77 at twenty.</td></tr>
+              <tr><td><strong>Smaller cubes</strong></td><td>Every cube 0.8 times the edge (12.8&nbsp;cm), five tasks, continued</td><td>0.53 at ten cubes and 0.16 at twenty. The drop starts within the training counts.</td></tr>
+              <tr><td><strong>Boxes and mixed objects</strong></td><td>Boxes of 16&times;24&times;16&nbsp;cm, cubes of three sizes in one scene, or cubes and boxes in one scene; line and square, continued</td><td>0.99, 0.97 and 0.99 at twenty objects.</td></tr>
+              <tr><td><strong>Cubes that have to stay in place</strong></td><td>Half of the cubes have their start pose as the goal; line and square, continued</td><td>0.98 at twenty cubes.</td></tr>
+              <tr><td><strong>Disturbances</strong></td><td>Every 10&nbsp;s or 20&nbsp;s a cube is moved to a free spot on the floor; no retraining, 40&nbsp;s per cube</td><td>At most 0.10 below the undisturbed episodes, e.g. 0.88 against 0.98 on the line with twenty cubes and a disturbance every 10&nbsp;s.</td></tr>
+              <tr><td><strong>Starting from a built structure</strong></td><td>All cubes start as a pyramid with the square as goal, or as stacks with the line as goal; continued</td><td>0.30 and 0.90 at fifteen cubes, reached by knocking the structure down. When a falling cube ends the episode as a failure: 0.92 and 0.82 at three cubes, 0.00 and 0.40 at fifteen.</td></tr>
+              <tr><td><strong>Stricter success</strong></td><td>No retraining. Every cube placed for 2&nbsp;s without interruption (50&nbsp;s per cube), or still placed 2&nbsp;s after a scripted release</td><td>Stacking (\(h=3\)) at twenty cubes: 0.92 held for 2&nbsp;s against 0.94 first success, and 0.73 after the release against 0.81 whole-task success.</td></tr>
+              <tr><td><strong>Mean or attention instead of the minimum</strong></td><td>The minimum over the other objects in the warping policy replaced by a mean or an attention-weighted mean; retrained</td><td>Mean success beyond the training counts with minimum, mean and attention: 0.82, 0.55 and 0.64 on stacking (\(h=3\)), 0.47, 0.47 and 0.66 on the pyramid.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <!--/ Ablations. -->
@@ -445,54 +487,6 @@
     </div>
     <!--/ Warp explorer. -->
 
-    <!-- Related work. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3" id="related">Related Work</h2>
-        <div class="content has-text-justified">
-          <p>
-            Methods that learn multi-object manipulation directly report whole-task success up to six objects, planners and scripted primitives need a symbolic model, and methods that edit a frozen policy target its own task or dynamics, sensor and task shifts. None edits a frozen skill to generalize across the number of objects.
-          </p>
-        </div>
-        <div class="table-container">
-          <table class="table related is-fullwidth is-hoverable">
-            <thead><tr><th>Approach</th><th>Methods</th><th>Largest object count reported</th><th>Difference to WAVE</th></tr></thead>
-            <tbody>
-              <tr><td><strong>Set and entity-centric policies</strong></td><td><a href="https://arxiv.org/abs/1703.06114">Deep Sets</a>, <a href="https://arxiv.org/abs/1806.01830">Relational RL</a>, <a href="https://arxiv.org/abs/1912.11032">Li et al. 2020</a>, <a href="https://arxiv.org/abs/2404.01220">ECRL</a>, <a href="https://arxiv.org/abs/2412.18907">EC-Diffuser</a>, <a href="https://arxiv.org/abs/2602.02722">HECRL</a>, <a href="https://arxiv.org/abs/2201.13388">Linear Relation Networks</a>, <a href="https://arxiv.org/abs/1906.03710">Lanier et al.</a>, <a href="https://arxiv.org/abs/2206.12030">PAIR</a>, <a href="https://arxiv.org/abs/2006.15055">Slot Attention</a>, <a href="https://arxiv.org/abs/2011.14381">SMORL</a></td><td>Whole-task success up to <strong>six objects</strong> (Li et al.: 0.75 at six); 30 blocks only in a symbolic world without physics (<a href="https://arxiv.org/abs/2009.12462">Janisch et al.</a>)</td><td>Learn the manipulation itself; the input grows with every object. WAVE reuses a skill and reads a fixed-size local view.</td></tr>
-              <tr><td><strong>Offline and hierarchical goal-conditioned RL</strong></td><td><a href="https://arxiv.org/abs/2410.20092">OGBench</a>, <a href="https://arxiv.org/abs/2506.04168">SHARSA</a>, <a href="https://arxiv.org/abs/2512.10926">Decoupled Q-Chunking</a></td><td>Stacking: 0.23 at two cubes, none at three or four; at most 0.36 at eight cubes (five-goal mean)</td><td>One policy per count, trained from data; WAVE trains once and generalizes zero-shot to larger counts.</td></tr>
-              <tr><td><strong>Size-extrapolation theory</strong></td><td><a href="https://arxiv.org/abs/2010.08853">Yehudai et al.</a>, <a href="https://arxiv.org/abs/2410.01104">Veličković et al.</a></td><td>&ndash;</td><td>Networks that pool over every entity can fail on larger sets and generalize when their local structure does not change with the count; nothing WAVE reads grows with the count.</td></tr>
-              <tr><td><strong>Task and motion planning, scripted primitives</strong></td><td><a href="https://arxiv.org/abs/1802.08705">PDDLStream</a>, <a href="https://arxiv.org/abs/2105.14074">Bilevel planning</a>, <a href="https://arxiv.org/abs/2010.14406">Transporter Networks</a>, <a href="https://arxiv.org/abs/2102.13177">Lin et al.</a>, <a href="https://arxiv.org/abs/2312.09120">Dispatcher/Executor</a></td><td>Any count, given a symbolic model and motion primitives</td><td>WAVE has neither a model nor primitives; the learned manipulation itself must generalize.</td></tr>
-              <tr><td><strong>Reusing a skill without freezing it</strong></td><td><a href="https://arxiv.org/abs/1803.03835">Kickstarting</a>, <a href="https://arxiv.org/abs/2204.02372">JSRL</a></td><td>&ndash;</td><td>Leave the multi-object behavior to a network trained on the new task; in our baselines JSRL succeeds in at most 0.08 of one-cube episodes.</td></tr>
-              <tr><td><strong>Editing a frozen policy's interface</strong></td><td><a href="https://arxiv.org/abs/1812.06298">Residual policy learning</a>, <a href="https://arxiv.org/abs/1812.03201">Residual RL</a>, <a href="https://arxiv.org/abs/2412.13630">Policy Decorator</a>, <a href="https://arxiv.org/abs/2407.16677">ResiP</a>, <a href="https://arxiv.org/abs/2506.15799">DSRL</a>, <a href="https://arxiv.org/abs/2605.19919">ZPRL</a>, <a href="https://arxiv.org/abs/2606.11489">CLAE</a>, <a href="https://arxiv.org/abs/2605.17144">COAST</a>, <a href="https://arxiv.org/abs/2602.03973">VLS</a>, <a href="https://arxiv.org/abs/2606.31043">Warp RL</a>, <a href="https://arxiv.org/abs/2305.02554">Pivoting</a>, <a href="https://arxiv.org/abs/2604.03905">DC-Ada</a>, <a href="https://arxiv.org/abs/2509.22310">APB</a></td><td>&ndash;</td><td>Refine a policy on its own task, or absorb dynamics, sensor or task shifts; none targets the number of objects. WAVE edits input and output and re-decides the edit at every step.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 class="title is-4" id="related-editing">Editing a Frozen Policy</h3>
-        <div class="content has-text-justified">
-          <p>
-            Interface-editing methods by where they edit a frozen policy, in what form, whether the edit is a function of the current state, and which shift it is meant to absorb. Closest to WAVE, Pivoting learns diagonal projections of the perceived state and commanded action of a frozen skill, but chooses them once per episode; with many objects the scene changes during the episode, so WAVE chooses the warp anew at every step.
-          </p>
-        </div>
-        <div class="table-container">
-          <table class="table related is-fullwidth is-hoverable">
-            <thead><tr><th>Method</th><th>Edit site</th><th>Edit form</th><th>Re-decided per step?</th><th>Shift the edit absorbs</th></tr></thead>
-            <tbody>
-              <tr><td><a href="https://arxiv.org/abs/1812.03201">Residual RL</a> and variants</td><td>action</td><td>additive, bounded</td><td>yes</td><td>same task, refined</td></tr>
-              <tr><td><a href="https://arxiv.org/abs/2606.31043">Warp RL</a></td><td>action distribution</td><td>spline flow</td><td>yes</td><td>dynamics</td></tr>
-              <tr><td><a href="https://arxiv.org/abs/2606.11489">CLAE</a></td><td>internal activations</td><td>affine</td><td>yes</td><td>behavior mode</td></tr>
-              <tr><td><a href="https://arxiv.org/abs/2605.19919">ZPRL</a></td><td>inserted latent</td><td>latent perturbation</td><td>yes</td><td>same task, refined</td></tr>
-              <tr><td><a href="https://arxiv.org/abs/2604.03905">DC-Ada</a></td><td>observation</td><td>transform found by reward-only random search</td><td>no</td><td>sensor heterogeneity</td></tr>
-              <tr><td><a href="https://arxiv.org/abs/2509.22310">APB</a></td><td>before and after a backbone</td><td>dense linear</td><td>no</td><td>task (meta-transfer)</td></tr>
-              <tr><td><a href="https://arxiv.org/abs/2305.02554">Pivoting</a></td><td>observation + action</td><td>diagonal scaling</td><td>no, once per episode</td><td>object properties (dynamics)</td></tr>
-              <tr><td><a href="https://jmlr.org/papers/v8/taylor07a.html">Inter-task mappings</a></td><td>state + action</td><td>hand-specified map</td><td>no</td><td>task pair</td></tr>
-              <tr class="is-ours"><td><span class="wave">WAVE</span> (ours)</td><td>observation + action</td><td>per-channel discrete affine</td><td>yes</td><td><em>scene composition (object count)</em></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <!--/ Related work. -->
 
   </div>
 </section>
@@ -501,11 +495,11 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title" id="bibtex">BibTeX</h2>
-    <!-- TODO: switch to @inproceedings with the venue once accepted. -->
-    <pre><code>@misc{wave2026,
-  author    = {Mattes, Paul and Abdeldayem, Ayman and Shcherba, Denis and Samek, Wojciech and Toussaint, Marc},
-  title     = {Object Count Generalization Is an Interface Problem: Warping a Frozen Skill Instead of Retraining It},
-  year      = {2026},
+    <pre><code>@article{mattes2026wave,
+  author  = {Mattes, Paul and Abdeldayem, Ayman and Shcherba, Denis and Samek, Wojciech and Toussaint, Marc},
+  title   = {Object Count Generalization Is an Interface Problem: Warping a Frozen Skill Instead of Retraining It},
+  journal = {arXiv preprint arXiv:2611.30765},
+  year    = {2026},
 }</code></pre>
   </div>
 </section>
@@ -514,16 +508,19 @@
 <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
-      <a class="icon-link" disabled>
+      <a class="icon-link" href="./static/paper/wave.pdf" aria-label="Paper PDF">
         <i class="fas fa-file-pdf"></i>
       </a>
-      <a class="icon-link" disabled>
+      <a class="icon-link" href="https://github.com/HHI-Robot-Learning/26-WAVE" aria-label="Code on GitHub">
         <i class="fab fa-github"></i>
       </a>
     </div>
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
+          <p>
+            This work has received support from the German Federal Ministry of Research, Technology and Space (BMFTR) under the Robotics Institute Germany (RIG) and as grant BIFOLD (01IS18025A, 01IS180371I).
+          </p>
           <p>
             This website is licensed under a <a rel="license"
                                                 href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
